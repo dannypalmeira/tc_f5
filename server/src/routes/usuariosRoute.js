@@ -1,13 +1,13 @@
 import express from "express";
 import UsuarioController from "../controllers/usuarioController.js";
 
-// as rotas utilizadas 
+// as rotas utilizadas
 const routes = express.Router();
 
-routes.get("/usuarios",UsuarioController.listaUsuario);
-routes.get("/usuarios/:id",UsuarioController.listaUsuarioPorId);
-routes.post("/usuarios",UsuarioController.cadastraUsuario);
-routes.put("/usuarios/:id",UsuarioController.atualizarUsuario);
-routes.delete("/usuarios/:id",UsuarioController.apagaUsuarioPorId);
+routes.get("/", UsuarioController.listaUsuario);
+routes.get("/:id", UsuarioController.listaUsuarioPorId);
+routes.post("/", UsuarioController.cadastraUsuario);
+routes.put("/:id", UsuarioController.atualizarUsuario);
+routes.delete("/:id", UsuarioController.apagaUsuarioPorId);
 
 export default routes;

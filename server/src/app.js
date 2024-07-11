@@ -6,11 +6,10 @@ import routes from "./routes/index.js";
 const app = express();
 routes(app);
 app.use(bodyParser.json());
-
-app.get("/" , (req, res) => {
-    res.status(200).send("Tech Challenger F5");
+app.use(routes);
+app.get("/", (req, res) => {
+  res.status(200).send("Tech Challenger F5");
 });
-
 
 // realizando export para conversar com demais
 export default app;
