@@ -1,6 +1,8 @@
-import {Router} from "express";
+import express from "express";
+import TarefaController from "../controllers/tarefaController.js"; // Certifique-se de que o caminho está correto
 
-const tarefaRoutes = Router();
+// as rotas utilizadas 
+const tarefaRoutes = express.Router();
 
 tarefaRoutes.get("/", TarefaController.listaTarefa);
 tarefaRoutes.get("/:id", TarefaController.listaTarefaPorId);
