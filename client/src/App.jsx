@@ -41,7 +41,7 @@ function App() {
     <main className='w-full min-h-screen bg-[#f3f4f6] '>
       <Routes>
         <Route element={<Layout />}>
-          <Route index path='/' element={<Navigate to='/login' />} />
+          <Route index path='*' element={<Navigate to='/login' />} />
           <Route path='/login' element={<Login />} />
           <Route path='/register' element={<Register />} />
           <Route path='/home' element={<Home />} />
