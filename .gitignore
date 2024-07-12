@@ -1,2 +1,3 @@
 server/src/config/conecta.json
 client/src/firebase/firebase.js
+.DS_Store
