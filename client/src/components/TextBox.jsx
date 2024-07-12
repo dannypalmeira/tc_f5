@@ -2,7 +2,7 @@ import React from "react";
 import clsx from "clsx";
 
 const Textbox = React.forwardRef(
-  ({ type, placeholder, label, className, register, name, error }, ref) => {
+  ({type, placeholder, label, className, register, name, error}, ref) => {
     return (
       <div className='w-full flex flex-col gap-1'>
         {label && (
@@ -31,4 +31,5 @@ const Textbox = React.forwardRef(
     );
   }
 );
+
 export default Textbox;
