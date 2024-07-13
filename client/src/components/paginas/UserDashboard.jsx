@@ -8,7 +8,7 @@ import Dashboard from "../../components/paginas/dashboard";
 import Andamento from "../../components/paginas/Andamento";
 import Todo from "../../components/paginas/Todo";
 import Finalizadas from "../../components/paginas/Finalizadas";
-import { Navigate, Outlet, Route, Routes, useRoutes } from "react-router-dom";
+import { Outlet, Route, Routes } from "react-router-dom";
 
 function Layout() {
 
@@ -35,7 +35,6 @@ export default function UserDashboard() {
         <Routes>
           <Route element={<Layout />}>
             <Route path='/' element={<Dashboard />} />
-            <Route path='/login ' element={<Dashboard />} />
             <Route path='/dashboard ' element={<Dashboard />} />
             <Route path='/dashboard ' element={<Dashboard />} />
             <Route path='/tarefas' element={<Tarefas />} />
