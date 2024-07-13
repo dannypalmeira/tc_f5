@@ -1,33 +1,33 @@
-import React, { useState } from 'react';
-import { Navigate, Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../../../contexts/authContext';
-import { signUp } from '../../../funcoes/auth';
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
+import { signUp } from "../../funcoes/auth";
 
-const Register = () => {
+export default function CreateUser() {
+  const [nome, setFirstName] = useState("");
+  const [sobrenome, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmaSenha, setConfirmPassword] = useState("");
+  const [isRegistering, setIsRegistering] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
-    const navigate = useNavigate()
+  const userData = {
+    nome,
+    sobrenome,
+    email,
+  };
 
-    const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
-    const [confirmPassword, setconfirmPassword] = useState('')
-    const [isRegistering, setIsRegistering] = useState(false)
-    const [errorMessage, setErrorMessage] = useState('')
-
-    const { userLoggedIn } = useAuth()
-
-    const onSubmit = async (e) => {
-        e.preventDefault()
-        if(!isRegistering) {
-            setIsRegistering(true)
-            await signUp(email, password)
-        }
+  const handleCreateUser = async (e) => {
+    e.preventDefault()
+    if(!isRegistering) {
+        setIsRegistering(true)
+        await signUp (email, password, userData)
     }
+}
 
-    return (
-        <>
-            {userLoggedIn && (<Navigate to={'/home'} replace={true} />)}
-
-            <main className="w-full h-screen flex self-center place-content-center place-items-center">
+  return (
+    <>
+      <main className="w-full h-screen flex self-center place-content-center place-items-center">
                 <div className="w-96 text-gray-600 space-y-5 p-4 shadow-xl border rounded-xl">
                     <div className="text-center mb-6">
                         <div className="mt-2">
@@ -36,9 +36,33 @@ const Register = () => {
 
                     </div>
                     <form
-                        onSubmit={onSubmit}
+                        onSubmit={handleCreateUser}
                         className="space-y-4"
                     >
+                        <div>
+                            <label className="text-sm text-gray-600 font-bold">
+                                Nome
+                            </label>
+                            <input
+                                type="text"
+                                autoComplete='nome'
+                                required
+                                value={nome} onChange={(e) => { setFirstName(e.target.value) }}
+                                className="w-full mt-2 px-3 py-2 text-gray-500 bg-transparent outline-none border focus:indigo-600 shadow-sm rounded-lg transition duration-300"
+                            />
+                        </div>
+                        <div>
+                            <label className="text-sm text-gray-600 font-bold">
+                            Sobrenome
+                            </label>
+                            <input
+                                type="text"
+                                autoComplete='sobrenome'
+                                required
+                                value={sobrenome} onChange={(e) => { setLastName(e.target.value) }}
+                                className="w-full mt-2 px-3 py-2 text-gray-500 bg-transparent outline-none border focus:indigo-600 shadow-sm rounded-lg transition duration-300"
+                            />
+                        </div>
                         <div>
                             <label className="text-sm text-gray-600 font-bold">
                                 Email
@@ -75,7 +99,7 @@ const Register = () => {
                                 type="password"
                                 autoComplete='off'
                                 required
-                                value={confirmPassword} onChange={(e) => { setconfirmPassword(e.target.value) }}
+                                value={confirmaSenha} onChange={(e) => { setConfirmPassword(e.target.value) }}
                                 className="w-full mt-2 px-3 py-2 text-gray-500 bg-transparent outline-none border focus:border-indigo-600 shadow-sm rounded-lg transition duration-300"
                             />
                         </div>
@@ -98,8 +122,6 @@ const Register = () => {
                     </form>
                 </div>
             </main>
-        </>
-    )
+    </>
+  );
 }
-
-export default Register;

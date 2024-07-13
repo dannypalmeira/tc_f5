@@ -4,36 +4,52 @@ import {Fragment, useEffect, useState} from "react";
 import {useForm} from "react-hook-form";
 import ModalWrapper from "../ModalWrapper";
 import {Dialog} from "@headlessui/react";
+import { addTarefa } from "../../funcoes/funcoes.jsx";
 import {BsChevronExpand} from "react-icons/bs";
-import {BiImages} from "react-icons/bi";
 import clsx from "clsx";
 import SelectList from "../SelectList";
-import Textbox from "../Textbox.jsx";
+import Textbox from "../TextBox.jsx";
 import Button from "../Buttons.jsx";
 
 const LISTA = ["PENTENDE", "EM ANDAMENTO", "FINALIZADA"];
 const PRIORIDADE = ["ALTA", "MÉDIA", "BAIXA"];
+const TIME = ["ROXO", "VERDE", "AZUL"];
 
 const AddTarefa = ({open, setOpen}) => {
-  const task = "";
+  const tarefa = "";
 
   const {
     register,
     handleSubmit,
     formState: {errors},
   } = useForm();
-  const [stage, setStage] = useState(task?.stage?.toUpperCase() || LISTA[0]);
-  const [priority, setPriority] = useState(
-    task?.priority?.toUpperCase() || PRIORIDADE[2]
-  );
-  const [assets, setAssets] = useState([]);
-  const [uploading, setUploading] = useState(false);
+  const [time, setTeam] = useState(TIME[0]);
+  const [situacao, setStage] = useState(LISTA[0]);
+  const [prioridade, setPriority] = useState(PRIORIDADE[2]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
-  const submitHandler = () => {};
+  const submitHandler = async (data) => {
+    setIsSubmitting(true);
+    const tarefaData = {
+      nomeTarefa: data.tarefa,
+      time,
+      situacao,
+      dataTarefa: data.data_tarefa,
+      prioridade
+    };
 
-  const handleSelect = (e) => {
-    setAssets(e.target.files);
+    try {
+      await addTarefa(tarefaData);
+      alert("Tarefa adicionada com sucesso!");
+      setOpen(false);
+    } catch (error) {
+      setErrorMessage(error.message);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
+
   return (
     <>
       <ModalWrapper open={open} setOpen={setOpen}>
@@ -48,56 +64,34 @@ const AddTarefa = ({open, setOpen}) => {
             <Textbox
               placeholder='Nome Tarefa'
               type='text'
-              name='title'
+              name='nomeTarefa'
               label='Nome Tarefa'
               className='w-full rounded'
+              register={register("nomeTarefa")}
             />
             <div>
-              <p className='text-gray-700'>Atribuir tarefa a: </p>
-              <Listbox>
-                <div className='relative mt-1'>
-                  <Listbox.Button className='relative w-full cursor-default rounded bg-white pl-3 pr-10 text-left px-3 py-2.5 2xl:py-3 border border-gray-300 sm:text-sm'>
-                    <span className='block truncate'>Nome Usuario</span>
-
-                    <span className='pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2'>
-                      <BsChevronExpand
-                        className='h-5 w-5 text-gray-400'
-                        aria-hidden='true'
-                      />
-                    </span>
-                  </Listbox.Button>
-                  <Transition
-                    as={Fragment}
-                    leave='transition ease-in duration-100'
-                    leaveFrom='opacity-100'
-                    leaveTo='opacity-0'
-                  >
-                    <Listbox.Options className='z-50 absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm'>
-                      <div className={clsx("flex items-center gap-2 truncate")}>
-                        <div className='w-6 h-6 rounded-full text-white flex items-center justify-center bg-violet-600'>
-                          <span className='text-center text-[10px]'>AF</span>
-                        </div>
-                        <span>ALGUEM FAZ</span>
-                      </div>
-                    </Listbox.Options>
-                  </Transition>
-                </div>
-              </Listbox>
+              <SelectList
+                label='Atribuir tarefa a:'
+                lists={TIME}
+                selected={time}
+                setSelected={setTeam}
+              />
             </div>
             <div className='flex gap-4'>
               <SelectList
                 label='Situaçao'
                 lists={LISTA}
-                selected={stage}
+                selected={situacao}
                 setSelected={setStage}
               />
               <div className='w-full'>
                 <Textbox
                   placeholder='Date'
                   type='date'
-                  name='date'
+                  name='data_tarefa'
                   label='Data da Tarefa'
                   className='w-full rounded'
+                  register={register("data_tarefa")}
                 />
               </div>
             </div>
@@ -105,7 +99,7 @@ const AddTarefa = ({open, setOpen}) => {
               <SelectList
                 label='Prioridade'
                 lists={PRIORIDADE}
-                selected={priority}
+                selected={prioridade}
                 setSelected={setPriority}
               />
             </div>

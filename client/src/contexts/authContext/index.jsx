@@ -1,57 +1,46 @@
 import React, { useContext, useEffect, useState } from "react";
-import { auth } from "../../firebase/firebase";
 import { GoogleAuthProvider } from "firebase/auth";
 import { onAuthStateChanged } from "firebase/auth";
+import { doc, onSnapshot } from "firebase/firestore";
+import { auth, db } from "../../firebase/firebase";
 
 const AuthContext = React.createContext();
 
 export function useAuth() {
     return useContext(AuthContext);
-}
+};
+
+export const doSignInWithGoogle = async () => {
+    const provider = new GoogleAuthProvider();
+    const result = await signInWithPopup(auth, provider);
+    return result;
+};
 
 export function AuthProvider({ children }) {
-    const [currentUser, setCurrentUser] = useState(null);
-    const [userLoggedIn, setUserLoggedIn] = useState(false);
-    const [isEmailUser, setIsEmailUser] = useState(false);
-    const [isGoogleUser, setIsGoogleUser] = useState(false);
-    const [loading, setLoading] = useState(true);
+    const [isLoading, setIsLoading] = useState(true);
+    const [isLoggedOut, setIsLoggedOut] = useState(true);
+    const [user, setUser] = useState(null);
 
-    useEffect(()=>{
-        const unsubscribe = onAuthStateChanged(auth, initializeUser);
-        return unsubscribe;
-    }, [])
-
-    async function initializeUser(user) {
-        if (user) {
-            setCurrentUser({ ...user });
-            const isEmail = user.providerData.some(
-                (provider) => provider.providerId === "password"
-            );
-            setIsEmailUser(isEmail);
-
-            const isGoogle = user.providerData.some(
-                (provider) => provider.providerId === GoogleAuthProvider.PROVIDER_ID
-            );
-            setIsGoogleUser(isGoogle);
-            setUserLoggedIn(true);
-        } else {
-            setCurrentUser(null);
-            setUserLoggedIn(false);
-        }
-        setLoading(false);
-    }
-
-    const value = {
-        isEmailUser,
-        isGoogleUser,
-        currentUser,
-        userLoggedIn,
-        loading
-    }
+    useEffect(() => {
+        const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+            if (currentUser) {
+                setIsLoggedOut(false);
+                onSnapshot(doc(db, "users", currentUser.uid), (doc) => {
+                    setUser(doc.data());
+                });
+            } else {
+                setIsLoggedOut(true);
+            }
+            setIsLoading(false);
+        });
+        return () => {
+            unsubscribe();
+        };
+    }, []);
 
     return (
-        <AuthContext.Provider value={value}>
-            {!loading && children}
+        <AuthContext.Provider value={{ isLoading, isLoggedOut, user }}>
+            {children}
         </AuthContext.Provider>
     )
-}
+};

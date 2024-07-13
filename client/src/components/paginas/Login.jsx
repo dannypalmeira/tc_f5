@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { signIn, doSignInWithGoogle } from "../../../funcoes/auth";
+import { signIn, doSignInWithGoogle } from "../../funcoes/auth";
 
-function Login() {
+export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isSigningIn, setIsSigningIn] = useState(false);
@@ -13,7 +13,7 @@ function Login() {
     e.preventDefault()
     if(!isSigningIn) {
         setIsSigningIn(true)
-        await signIn(email, password)
+        await signIn(email, password    )
         // doSendEmailVerification()
     }
 }
@@ -108,6 +108,4 @@ const onGoogleSignIn = (e) => {
     </div>
     
   );
-};
-
-export default Login;
+}
