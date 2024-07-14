@@ -1,6 +1,5 @@
 // URLS das APIs depois colocar isso em um arquivo fechado para não vazar
-const apiTimesUrl = 'http://localhost:4000/times';
-const apiTarefasUrl = 'http://localhost:4000/tarefas';
+import { apiTarefasUrl,apiTimesUrl } from "./apiConfig";
 
 // Função para carregar os nomes dos times disponíveis no <select> e alterar a info do campo conforme na base
 async function carregarTimesDisponiveis() {
