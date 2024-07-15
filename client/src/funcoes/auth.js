@@ -20,31 +20,60 @@ import {
 
   export const doSignInWithGoogle = async () => {
     const provider = new GoogleAuthProvider();
-    const result = await signInWithPopup(auth, provider);
-    return result;
+    try {
+      const result = await signInWithPopup(auth, provider);
+      return result.user;
+    } catch (error) {
+      console.error("Erro ao fazer login com Google:", error);
+      return error;
+    }
   };
 
-  export const doPasswordReset = (email) => {
-    return sendPasswordResetEmail (auth, email);
+  export const doPasswordReset = async (email) => {
+    try {
+      await sendPasswordResetEmail(auth, email);
+      return { message: "Email de redefinição de senha enviado" };
+    } catch (error) {
+      console.error("Erro ao enviar email de redefinição de senha:", error);
+      return error;
+    }
   };
 
-  export const doPasswordChange = (password) => {
-    return updatePassword(auth.currentUser, password);
+  export const doPasswordChange = async (password) => {
+    try {
+      if (auth.currentUser) {
+        await updatePassword(auth.currentUser, password);
+        return { message: "Senha atualizada com sucesso" };
+      } else {
+        throw new Error("Nenhum usuário está logado");
+      }
+    } catch (error) {
+      console.error("Erro ao atualizar senha:", error);
+      return error;
+    }
   };
   
-  export const doSignOut = () => {
-    return auth.signOut();
+  export const doSignOut = async () => {
+    try {
+      await auth.signOut();
+      return { message: "Logout realizado com sucesso" };
+    } catch (error) {
+      console.error("Erro ao fazer logout:", error);
+      return error;
+    }
   };
   
   export const signUp = async (email, password, userData) => {
     try {
-      const user = await createUserWithEmailAndPassword(auth, email, password);
-      await setDoc(doc(db, "usuarios", user.user.uid), {
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+      await setDoc(doc(db, "usuarios", user.uid), {
         ...userData,
-        uid: user.user.uid,
+        uid: user.uid,
       });
-      return user.user;
+      return user;
     } catch (error) {
+      console.error("Erro ao criar conta:", error);
       return error;
     }
   };
