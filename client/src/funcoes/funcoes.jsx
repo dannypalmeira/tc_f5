@@ -10,6 +10,7 @@ import {
     updateDoc,
   } from "firebase/firestore";
   import { db } from "../firebase/firebase";
+  import { useAuth } from "../contexts/authContext";
     
   // função para gerar id Aleatorio
   const generateRandomID = () => {
@@ -114,14 +115,19 @@ import {
 
   //  mapear os campos do formulário para os campos da coleção
 export const mapFormDataToCollectionFields = (data) => {
+  
+  console.log(data)
   return {
+    
+
       nome_tarefa: data.nomeTarefa,
-      id_usu: "12345", // Precisa ser atualizado com o ID do usuário correto
+      id_usu: data.user.uid, // Precisa ser atualizado com o ID do usuário correto
       id_time: data.id_time,
       situacao: data.situacao,
       data_ini: data.data_tarefa,
       descricao: data.descricao,
       prazo: data.prazo
   };
+  
 };
 

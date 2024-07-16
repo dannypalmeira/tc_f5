@@ -9,6 +9,7 @@ import Textbox from "../TextBox.jsx";
 import Button from "../Buttons.jsx";
 import { apiTimesUrl } from "../../../../server/src/funcoes/apiConfig.js";
 import { addTarefa, mapFormDataToCollectionFields} from "../../funcoes/funcoes.jsx";
+import { useAuth } from "../../contexts/authContext/index.jsx";
 
 
 const LISTA = ["PENDENTE", "EM ANDAMENTO", "FINALIZADA"];
@@ -22,8 +23,16 @@ const AddTarefa = ({ open, setOpen }) => {
   const [prioridade, setPriority] = useState(PRIORIDADE[2]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [loading, setLoading] = useState(true);
 
+  const {user} = useAuth();
   useEffect(() => {
+    
+    if (user) {
+      
+      setLoading(false);
+    }
+
     const carregarTimesDisponiveis = async () => {
       try {
         const response = await fetch(apiTimesUrl);
@@ -41,15 +50,20 @@ const AddTarefa = ({ open, setOpen }) => {
     };
 
     carregarTimesDisponiveis();
-  }, []);
+  }, [user]) ;
 
   const submitHandler = async (data) => {
     setIsSubmitting(true);
+  
+   
+
     const formData = {
         ...data,
         id_time: time,
         situacao,
         prazo: prioridade,
+        id_usu
+        
     };
     const tarefaData = mapFormDataToCollectionFields(formData);
 
@@ -65,7 +79,9 @@ const AddTarefa = ({ open, setOpen }) => {
 };
 
   return (
+    
     <>
+    {loading &&  <div> Carregando...</div> }
       <ModalWrapper open={open} setOpen={setOpen}>
         <form onSubmit={handleSubmit(submitHandler)}>
           <Dialog.Title
@@ -89,9 +105,9 @@ const AddTarefa = ({ open, setOpen }) => {
             <div>
               <label htmlFor="atribuir" className="block text-sm font-medium text-gray-700">Atribuir tarefa a:</label>
               <select
-                className='w-full rounded'
+                className='w-full rounded bg-transparent px-3 py-2.5 2xl:py-3 border border-gray-300 placeholder-gray-400 text-gray-900 outline-none text-base focus:ring-2 ring-blue-300 w-full rounded'
                 id="atribuir"
-                class="bg-transparent px-3 py-2.5 2xl:py-3 border border-gray-300 placeholder-gray-400 text-gray-900 outline-none text-base focus:ring-2 ring-blue-300 w-full rounded"
+            
                 value={time}
                 onChange={(e) => setTeam(e.target.value)}
               >
