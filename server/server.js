@@ -1,8 +1,7 @@
-
-import app from "./src/app.js"
+import app from "./src/app.js";
 //porta utilizada
-const PORT = 4000;
+const PORT = process.env.PORT || 4000;
 
 app.listen(PORT, () => {
-    console.log("Servidor Funcionando!");
+  console.log(`Servidor Funcionando na porta ${PORT}!`);
 });

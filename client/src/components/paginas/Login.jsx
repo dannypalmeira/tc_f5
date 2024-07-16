@@ -18,15 +18,18 @@ export default function Login() {
       if (!isSigningIn) {
         setIsSigningIn(true);
         const res = await signIn(email, password);
-
+        const token = await res.getIdToken();
         if (!res.reloadUserInfo) {
           setIsSigningIn(false);
         }
         const userData = res.reloadUserInfo;
         setUser({
+          token: token,
           email: userData.email,
+          nome: userData.nome,
+          sobrenome: userData.sobrenome,
         });
-        //nav("/dashboard");
+        nav("/dashboard");
       }
     } catch (ex) {
       setErrorMessage("Email ou senha inválidos.");
