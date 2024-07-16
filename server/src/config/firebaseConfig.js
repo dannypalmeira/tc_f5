@@ -1,22 +1,26 @@
 //configuração do firebase, com o banco
 
 import admin from "firebase-admin";
+import fs from "fs";
 import dotenv from "dotenv";
 dotenv.config();
 
-const serviceAccount = {
-  type: process.env.fb_type,
-  project_id: process.env.fb_project_id,
-  private_key_id: process.env.fb_private_key_id,
-  private_key: process.env.fb_private_key,
-  client_email: process.env.fb_client_email,
-  client_id: process.env.fb_client_id,
-  auth_uri: process.env.fb_auth_uri,
-  token_uri: process.env.fb_token_uri,
-  auth_provider_x509_cert_url: process.env.fb_auth_provider_x509_cert_url,
-  client_x509_cert_url: process.env.fb_client_x509_cert_url,
-  universe_domain: process.env.fb_universe_domain,
-};
+const serviceAccount = JSON.parse(
+  fs.readFileSync(new URL("./conecta.json", import.meta.url))
+);
+// {
+//   type: process.env.fb_type,
+//   project_id: process.env.fb_project_id,
+//   private_key_id: process.env.fb_private_key_id,
+//   private_key: process.env.fb_private_key.split(String.raw`\n`).join("\n"),
+//   client_email: process.env.fb_client_email,
+//   client_id: process.env.fb_client_id,
+//   auth_uri: process.env.fb_auth_uri,
+//   token_uri: process.env.fb_token_uri,
+//   auth_provider_x509_cert_url: process.env.fb_auth_provider_x509_cert_url,
+//   client_x509_cert_url: process.env.fb_client_x509_cert_url,
+//   universe_domain: process.env.fb_universe_domain,
+// };
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
