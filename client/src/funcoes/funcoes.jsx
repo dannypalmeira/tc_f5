@@ -11,6 +11,7 @@ import {
   } from "firebase/firestore";
   import { db } from "../firebase/firebase";
     
+  // função para gerar id Aleatorio
   const generateRandomID = () => {
     const characters =
       "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -110,3 +111,17 @@ import {
       throw new Error("Erro ao adicionar tarefa: " + error.message);
     }
   };
+
+  //  mapear os campos do formulário para os campos da coleção
+export const mapFormDataToCollectionFields = (data) => {
+  return {
+      nome_tarefa: data.nomeTarefa,
+      id_usu: "12345", // Precisa ser atualizado com o ID do usuário correto
+      id_time: data.id_time,
+      situacao: data.situacao,
+      data_ini: data.data_tarefa,
+      descricao: data.descricao,
+      prazo: data.prazo
+  };
+};
+
