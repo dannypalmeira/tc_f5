@@ -119,7 +119,7 @@ const AddTarefa = ({open, setOpen}) => {
                   value={time}
                   onChange={(e) => setTeam(e.target.value)}
                 >
-                  <option value=''>Selecione um time</option>
+                  
                   {times.map((time) => (
                     <option key={time.id} value={time.id}>
                       {time.data.nome_time}
