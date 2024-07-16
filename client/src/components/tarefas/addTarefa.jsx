@@ -1,23 +1,21 @@
-import React from "react";
-import {Listbox, Transition} from "@headlessui/react";
-import {Fragment, useEffect, useState} from "react";
-import {useForm} from "react-hook-form";
+import React, { Fragment, useEffect, useState } from "react";
+import { Listbox, Transition, Dialog } from "@headlessui/react";
+import { useForm } from "react-hook-form";
 import ModalWrapper from "../ModalWrapper";
-import {Dialog} from "@headlessui/react";
-import { addTarefa } from "../../funcoes/funcoes.jsx";
-import {BsChevronExpand} from "react-icons/bs";
+import { BsChevronExpand } from "react-icons/bs";
 import clsx from "clsx";
 import SelectList from "../SelectList";
 import Textbox from "../TextBox.jsx";
 import Button from "../Buttons.jsx";
-import { apiTarefasUrl, apiTimesUrl } from "../../../../server/src/funcoes/apiConfig.js";
+import { apiTimesUrl } from "../../../../server/src/funcoes/apiConfig.js";
+import { addTarefa, mapFormDataToCollectionFields} from "../../funcoes/funcoes.jsx";
+
 
 const LISTA = ["PENDENTE", "EM ANDAMENTO", "FINALIZADA"];
 const PRIORIDADE = ["ALTA", "MÉDIA", "BAIXA"];
 
-
-const AddTarefa = ({open, setOpen}) => { 
-  const {register,handleSubmit,formState: {errors}} = useForm();
+const AddTarefa = ({ open, setOpen }) => {
+  const { register, handleSubmit, formState: { errors } } = useForm();
   const [times, setTimes] = useState([]);
   const [time, setTeam] = useState("");
   const [situacao, setStage] = useState(LISTA[0]);
@@ -47,37 +45,25 @@ const AddTarefa = ({open, setOpen}) => {
 
   const submitHandler = async (data) => {
     setIsSubmitting(true);
-    const tarefaData = {
-      nome_tarefa: data.nomeTarefa,
-      id_usu: "12345", // precisa verificar melhor vinculo para atribuir a tarefa a um usuario do time ou mais, acredito que o melhor é colocar em outra função de inicio apenas cria a tarefa
-      id_time: time,
-      situacao,
-      data_ini: data.data_tarefa,
-      descricao: data.descricao,
-      prazo: prioridade
+    const formData = {
+        ...data,
+        id_time: time,
+        situacao,
+        prazo: prioridade,
     };
+    const tarefaData = mapFormDataToCollectionFields(formData);
 
     try {
-      const response = await fetch(apiTarefasUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(tarefaData)
-      });
-
-      if (!response.ok) {
-        throw new Error('Erro ao enviar tarefa');
-      }
-
-      alert("Tarefa criada com sucesso!");
-      setOpen(false);
+        await addTarefa(tarefaData);
+        alert("Tarefa criada com sucesso!");
+        setOpen(false);
     } catch (error) {
-      setErrorMessage(error.message);
+        setErrorMessage(error.message);
     } finally {
-      setIsSubmitting(false);
+        setIsSubmitting(false);
     }
-  };
+};
+
   return (
     <>
       <ModalWrapper open={open} setOpen={setOpen}>
@@ -99,28 +85,28 @@ const AddTarefa = ({open, setOpen}) => {
               required
               error={errors.nomeTarefa}
             />
-            
+
             <div>
-            <label htmlFor="atribuir" className="block text-sm font-medium text-gray-700">Atribuir tarefa a:</label>
-              
-              <select  className='w-full rounded'
-                id ="atibuir"
-                label='Atribuir tarefa a:' class="bg-transparent px-3 py-2.5 2xl:py-3 border border-gray-300 placeholder-gray-400 text-gray-900 outline-none text-base focus:ring-2 ring-blue-300 w-full rounded"// depois da uma olhada aqui Danny, não sabia como fazer só copiei para ficar igual dos demais
+              <label htmlFor="atribuir" className="block text-sm font-medium text-gray-700">Atribuir tarefa a:</label>
+              <select
+                className='w-full rounded'
+                id="atribuir"
+                class="bg-transparent px-3 py-2.5 2xl:py-3 border border-gray-300 placeholder-gray-400 text-gray-900 outline-none text-base focus:ring-2 ring-blue-300 w-full rounded"
                 value={time}
-                onChange={(e) => setTeam(e.target.value)}>
-                  <option value="">Selecione um time</option>
-                  {times.map((time) => (
-                    <option key={time.id} value={time.id}>
-                      {time.data.nome_time}
-                    </option>
-                  ))}
-                </select>
-                
-              </div>
+                onChange={(e) => setTeam(e.target.value)}
+              >
+                <option value="">Selecione um time</option>
+                {times.map((time) => (
+                  <option key={time.id} value={time.id}>
+                    {time.data.nome_time}
+                  </option>
+                ))}
+              </select>
+            </div>
 
             <div className='flex gap-4'>
               <SelectList
-                label='Situaçao'
+                label='Situação'
                 lists={LISTA}
                 selected={situacao}
                 setSelected={setStage}
@@ -138,17 +124,18 @@ const AddTarefa = ({open, setOpen}) => {
                 />
               </div>
             </div>
-            
-            <Textbox //faltou colocar a descrição. qualquer coisa ajusta isso aqui pls kkkkkk
-            placeholder="Descrição"
-            type="text"
-            name="descricao"
-            label="Descrição"
-            className="w-full rounded"
-            register={register}
-            required
-            error={errors.descricao}
-          />
+
+            <Textbox
+              placeholder="Descrição"
+              type="text"
+              name="descricao"
+              label="Descrição"
+              className="w-full rounded"
+              register={register}
+              required
+              error={errors.descricao}
+            />
+
             <div className='flex gap-4'>
               <SelectList
                 label='Prioridade'
@@ -158,11 +145,17 @@ const AddTarefa = ({open, setOpen}) => {
               />
             </div>
 
+            {errorMessage && (
+              <div className="text-red-500">
+                {errorMessage}
+              </div>
+            )}
+
             <div className='bg-gray-50 py-6 sm:flex sm:flex-row-reverse gap-4'>
               <Button
-                label='Criar'
+                label='Criar Tarefa'
                 type='submit'
-                className='bg-blue-600 px-8 text-sm font-semibold text-white hover:bg-blue-700  sm:w-auto'
+                className='bg-blue-600 px-8 text-sm font-semibold text-white hover:bg-blue-700 sm:w-auto'
                 disabled={isSubmitting}
               />
               <Button
