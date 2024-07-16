@@ -1,17 +1,22 @@
 import React, {useState, useEffect} from "react";
 import {useAuth} from "../../contexts/authContext";
 
-const Profile = async () => {
-  const [user, setUser] = useState(null);
-  const ii = useAuth();
-  console.log("oiiiiiiii", ii);
-
+export default function Profile() {
+  const [loading, setLoading] = useState(true);
+  const {user} = useAuth();
+  useEffect(() => {
+    if (user) {
+      setLoading(false);
+    }
+  }, [user]);
+  if (loading) return <div>Crregando...</div>;
   return (
-    <>
-      OK
-      {user}
-    </>
+    <div className=''>
+      Nome:{user.nome}
+      <br />
+      Email: {user.email}
+      <br />
+      <button>Editar</button>
+    </div>
   );
-};
-
-export default Profile;
+}

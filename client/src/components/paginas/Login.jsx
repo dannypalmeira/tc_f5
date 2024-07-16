@@ -1,12 +1,16 @@
-import React, {useState} from "react";
-import {Link} from "react-router-dom";
+import React, {useState, useContext} from "react";
+import {Link, useNavigate} from "react-router-dom";
 import {signIn, doSignInWithGoogle} from "../../funcoes/auth";
+import {useAuth} from "../../contexts/authContext";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isSigningIn, setIsSigningIn] = useState(false);
+  const [isSigningInGoogle, setIsSigningInGoogle] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const nav = useNavigate();
+  const {user, setUser} = useAuth();
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -15,7 +19,14 @@ export default function Login() {
         setIsSigningIn(true);
         const res = await signIn(email, password);
 
-        // doSendEmailVerification()
+        if (!res.reloadUserInfo) {
+          setIsSigningIn(false);
+        }
+        const userData = res.reloadUserInfo;
+        setUser({
+          email: userData.email,
+        });
+        //nav("/dashboard");
       }
     } catch (ex) {
       setErrorMessage("Email ou senha inválidos.");
@@ -28,10 +39,10 @@ export default function Login() {
 
   const onGoogleSignIn = (e) => {
     e.preventDefault();
-    if (!isSigningIn) {
-      setIsSigningIn(true);
+    if (!isSigningInGoogle) {
+      setIsSigningInGoogle(true);
       doSignInWithGoogle().catch((err) => {
-        setIsSigningIn(false);
+        setIsSigningInGoogle(false);
       });
     }
   };
@@ -104,12 +115,12 @@ export default function Login() {
             <div className='border-b-2 mb-2.5 ml-2 w-full'></div>
           </div>
           <button
-            disabled={isSigningIn}
+            disabled={isSigningInGoogle}
             onClick={(e) => {
               onGoogleSignIn(e);
             }}
             className={`w-full flex items-center justify-center gap-x-3 py-2.5 border rounded-lg text-sm font-medium  ${
-              isSigningIn
+              isSigningInGoogle
                 ? "cursor-not-allowed"
                 : "hover:bg-gray-100 transition duration-300 active:bg-gray-100"
             }`}
@@ -144,7 +155,7 @@ export default function Login() {
                 </clipPath>
               </defs>
             </svg>
-            {isSigningIn ? "Entrando..." : "Entrar com Google"}
+            {isSigningInGoogle ? "Entrando..." : "Entrar com Google"}
           </button>
         </div>
       </main>
