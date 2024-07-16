@@ -1,22 +1,28 @@
-import React, { Fragment, useEffect, useState } from "react";
-import { Listbox, Transition, Dialog } from "@headlessui/react";
-import { useForm } from "react-hook-form";
+import React, {Fragment, useEffect, useState} from "react";
+import {Listbox, Transition, Dialog} from "@headlessui/react";
+import {useForm} from "react-hook-form";
 import ModalWrapper from "../ModalWrapper";
-import { BsChevronExpand } from "react-icons/bs";
+import {BsChevronExpand} from "react-icons/bs";
 import clsx from "clsx";
 import SelectList from "../SelectList";
 import Textbox from "../TextBox.jsx";
 import Button from "../Buttons.jsx";
-import { apiTimesUrl } from "../../../../server/src/funcoes/apiConfig.js";
-import { addTarefa, mapFormDataToCollectionFields} from "../../funcoes/funcoes.jsx";
-import { useAuth } from "../../contexts/authContext/index.jsx";
-
+import {apiTimesUrl} from "../../../../server/src/funcoes/apiConfig.js";
+import {
+  addTarefa,
+  mapFormDataToCollectionFields,
+} from "../../funcoes/funcoes.jsx";
+import {useAuth} from "../../contexts/authContext/index.jsx";
 
 const LISTA = ["PENDENTE", "EM ANDAMENTO", "FINALIZADA"];
 const PRIORIDADE = ["ALTA", "MÉDIA", "BAIXA"];
 
-const AddTarefa = ({ open, setOpen }) => {
-  const { register, handleSubmit, formState: { errors } } = useForm();
+const AddTarefa = ({open, setOpen}) => {
+  const {
+    register,
+    handleSubmit,
+    formState: {errors},
+  } = useForm();
   const [times, setTimes] = useState([]);
   const [time, setTeam] = useState("");
   const [situacao, setStage] = useState(LISTA[0]);
@@ -27,9 +33,7 @@ const AddTarefa = ({ open, setOpen }) => {
 
   const {user} = useAuth();
   useEffect(() => {
-    
     if (user) {
-      
       setLoading(false);
     }
 
@@ -37,153 +41,156 @@ const AddTarefa = ({ open, setOpen }) => {
       try {
         const response = await fetch(apiTimesUrl);
         if (!response.ok) {
-          throw new Error('Erro ao buscar times disponíveis');
+          throw new Error("Erro ao buscar times disponíveis");
         }
 
         const timesData = await response.json();
         setTimes(timesData);
         setTeam(timesData.length > 0 ? timesData[0].id : "");
       } catch (error) {
-        console.error('Erro ao carregar nomes de times disponíveis:', error);
-        alert('Erro ao carregar nomes de times disponíveis. Por favor, tente novamente.');
+        console.error("Erro ao carregar nomes de times disponíveis:", error);
+        alert(
+          "Erro ao carregar nomes de times disponíveis. Por favor, tente novamente."
+        );
       }
     };
 
     carregarTimesDisponiveis();
-  }, [user]) ;
-
+  }, [user]);
   const submitHandler = async (data) => {
+    console.log("user", user);
     setIsSubmitting(true);
-  
-   
 
     const formData = {
-        ...data,
-        id_time: time,
-        situacao,
-        prazo: prioridade,
-        id_usu
-        
+      ...data,
+      id_time: time,
+      situacao,
+      prazo: prioridade,
+      id_usu: user.id,
     };
     const tarefaData = mapFormDataToCollectionFields(formData);
 
     try {
-        await addTarefa(tarefaData);
-        alert("Tarefa criada com sucesso!");
-        setOpen(false);
+      await addTarefa(tarefaData);
+      alert("Tarefa criada com sucesso!");
+      setOpen(false);
     } catch (error) {
-        setErrorMessage(error.message);
+      setErrorMessage(error.message);
     } finally {
-        setIsSubmitting(false);
+      setIsSubmitting(false);
     }
-};
+  };
 
   return (
-    
     <>
-    {loading &&  <div> Carregando...</div> }
-      <ModalWrapper open={open} setOpen={setOpen}>
-        <form onSubmit={handleSubmit(submitHandler)}>
-          <Dialog.Title
-            as='h2'
-            className='text-base font-bold leading-6 text-gray-900 mb-4'
-          >
-            ADICIONAR TAREFA
-          </Dialog.Title>
-          <div className='mt-2 flex flex-col gap-6'>
-            <Textbox
-              placeholder='Nome Tarefa'
-              type='text'
-              name='nomeTarefa'
-              label='Nome Tarefa'
-              className='w-full rounded'
-              register={register}
-              required
-              error={errors.nomeTarefa}
-            />
-
-            <div>
-              <label htmlFor="atribuir" className="block text-sm font-medium text-gray-700">Atribuir tarefa a:</label>
-              <select
-                className='w-full rounded bg-transparent px-3 py-2.5 2xl:py-3 border border-gray-300 placeholder-gray-400 text-gray-900 outline-none text-base focus:ring-2 ring-blue-300 w-full rounded'
-                id="atribuir"
-            
-                value={time}
-                onChange={(e) => setTeam(e.target.value)}
-              >
-                <option value="">Selecione um time</option>
-                {times.map((time) => (
-                  <option key={time.id} value={time.id}>
-                    {time.data.nome_time}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className='flex gap-4'>
-              <SelectList
-                label='Situação'
-                lists={LISTA}
-                selected={situacao}
-                setSelected={setStage}
+      {loading ? (
+        <div> Carregando...</div>
+      ) : (
+        <ModalWrapper open={open} setOpen={setOpen}>
+          <form onSubmit={handleSubmit(submitHandler)}>
+            <Dialog.Title
+              as='h2'
+              className='text-base font-bold leading-6 text-gray-900 mb-4'
+            >
+              ADICIONAR TAREFA
+            </Dialog.Title>
+            <div className='mt-2 flex flex-col gap-6'>
+              <Textbox
+                placeholder='Nome Tarefa'
+                type='text'
+                name='nomeTarefa'
+                label='Nome Tarefa'
+                className='w-full rounded'
+                register={register}
+                required
+                error={errors.nomeTarefa}
               />
-              <div className='w-full'>
-                <Textbox
-                  placeholder='Data'
-                  type='date'
-                  name='data_tarefa'
-                  label='Data da Tarefa'
-                  className='w-full rounded'
-                  register={register}
-                  required
-                  error={errors.data_tarefa}
+
+              <div>
+                <label
+                  htmlFor='atribuir'
+                  className='block text-sm font-medium text-gray-700'
+                >
+                  Atribuir tarefa a:
+                </label>
+                <select
+                  className='w-full rounded bg-transparent px-3 py-2.5 2xl:py-3 border border-gray-300 placeholder-gray-400 text-gray-900 outline-none text-base focus:ring-2 ring-blue-300 w-full rounded'
+                  id='atribuir'
+                  value={time}
+                  onChange={(e) => setTeam(e.target.value)}
+                >
+                  <option value=''>Selecione um time</option>
+                  {times.map((time) => (
+                    <option key={time.id} value={time.id}>
+                      {time.data.nome_time}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className='flex gap-4'>
+                <SelectList
+                  label='Situação'
+                  lists={LISTA}
+                  selected={situacao}
+                  setSelected={setStage}
+                />
+                <div className='w-full'>
+                  <Textbox
+                    placeholder='Data'
+                    type='date'
+                    name='data_tarefa'
+                    label='Data da Tarefa'
+                    className='w-full rounded'
+                    register={register}
+                    required
+                    error={errors.data_tarefa}
+                  />
+                </div>
+              </div>
+
+              <Textbox
+                placeholder='Descrição'
+                type='text'
+                name='descricao'
+                label='Descrição'
+                className='w-full rounded'
+                register={register}
+                required
+                error={errors.descricao}
+              />
+
+              <div className='flex gap-4'>
+                <SelectList
+                  label='Prioridade'
+                  lists={PRIORIDADE}
+                  selected={prioridade}
+                  setSelected={setPriority}
+                />
+              </div>
+
+              {errorMessage && (
+                <div className='text-red-500'>{errorMessage}</div>
+              )}
+
+              <div className='bg-gray-50 py-6 sm:flex sm:flex-row-reverse gap-4'>
+                <Button
+                  label='Criar Tarefa'
+                  type='submit'
+                  className='bg-blue-600 px-8 text-sm font-semibold text-white hover:bg-blue-700 sm:w-auto'
+                  disabled={isSubmitting}
+                />
+                <Button
+                  type='button'
+                  className='bg-white px-5 text-sm font-semibold text-gray-900 sm:w-auto'
+                  onClick={() => setOpen(false)}
+                  label='Cancelar'
                 />
               </div>
             </div>
-
-            <Textbox
-              placeholder="Descrição"
-              type="text"
-              name="descricao"
-              label="Descrição"
-              className="w-full rounded"
-              register={register}
-              required
-              error={errors.descricao}
-            />
-
-            <div className='flex gap-4'>
-              <SelectList
-                label='Prioridade'
-                lists={PRIORIDADE}
-                selected={prioridade}
-                setSelected={setPriority}
-              />
-            </div>
-
-            {errorMessage && (
-              <div className="text-red-500">
-                {errorMessage}
-              </div>
-            )}
-
-            <div className='bg-gray-50 py-6 sm:flex sm:flex-row-reverse gap-4'>
-              <Button
-                label='Criar Tarefa'
-                type='submit'
-                className='bg-blue-600 px-8 text-sm font-semibold text-white hover:bg-blue-700 sm:w-auto'
-                disabled={isSubmitting}
-              />
-              <Button
-                type='button'
-                className='bg-white px-5 text-sm font-semibold text-gray-900 sm:w-auto'
-                onClick={() => setOpen(false)}
-                label='Cancelar'
-              />
-            </div>
-          </div>
-        </form>
-      </ModalWrapper>
+          </form>
+        </ModalWrapper>
+      )}
     </>
   );
 };
