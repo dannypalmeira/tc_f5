@@ -1,39 +1,60 @@
-import React, {Fragment, useEffect, useState} from "react";
-import {Listbox, Transition, Dialog} from "@headlessui/react";
+import React, {useEffect, useState} from "react";
+import {Dialog} from "@headlessui/react";
 import {useForm} from "react-hook-form";
 import ModalWrapper from "../ModalWrapper";
 import SelectList from "../SelectList";
 import Textbox from "../TextBox.jsx";
 import Button from "../Buttons.jsx";
-import {apiTimesUrl} from "../../../../server/src/funcoes/apiConfig.js";
-import {mapFormDataToCollectionFields} from "../../funcoes/funcoes.jsx";
-import {useAuth} from "../../contexts/authContext/index.jsx";
 import {cadastraTarefa} from "../../services/tarefaService.js";
-
+import {buscatimes} from "../../services/timeService.js";
+import {useAuth} from "../../contexts/authContext/index.jsx";
+import {mapFormDataToCollectionFields} from "../../funcoes/funcoes.jsx";
 const LISTA = ["PENDENTE", "EM ANDAMENTO", "FINALIZADA"];
 const PRIORIDADE = ["ALTA", "MEDIA", "BAIXA"];
 
 const AddTarefa = ({open, setOpen}) => {
-  const tarefa = "";
+  const {user} = useAuth();
+  const [loading, setLoading] = useState(true);
+  const [team, setTeam] = useState([]);
+  const [situacao, setStage] = useState(LISTA[0]);
+  const [prioridades, setPrioridades] = useState(PRIORIDADE[2]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [selectedTeam, setSelectedTeam] = useState("");
+  let nomeTimes = [];
+
+  useEffect(() => {
+    if (user) {
+      setLoading(false);
+    }
+    buscatimesconst();
+  }, [user]);
 
   const {
     register,
     handleSubmit,
     formState: {errors},
   } = useForm();
-  const [team, setTeam] = useState(tarefa?.team || []);
-  const [situacao, setStage] = useState(
-    tarefa?.situacao?.toUpperCase() || LISTA[0]
-  );
-  const [prioridades, setPrioridades] = useState(
-    tarefa?.prazo?.toUpperCase() || PRIORIDADE[2]
-  );
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
-
+  const buscatimesconst = async () => {
+    nomeTimes = [];
+    const times = await buscatimes();
+    setTeam(times);
+  };
   const submitHandler = async (data) => {
     setIsSubmitting(true);
 
+    const formData = {
+      id_usu: user.id,
+      nome_tarefa: data.nome_tarefa,
+      data_ini: data.data_ini,
+      descricao: data.descricao,
+      id_time: selectedTeam,
+      situacao,
+      prazo: prioridades,
+    };
+
+    const tarefaData = mapFormDataToCollectionFields(formData);
+    console.log("tarefa", tarefaData, formData, data, user);
     try {
       await cadastraTarefa(tarefaData);
       alert("Tarefa criada com sucesso!");
@@ -45,11 +66,13 @@ const AddTarefa = ({open, setOpen}) => {
       }, 2600);
     } finally {
       setIsSubmitting(false);
-      setErrorMessage("Erro ao adicionar tarefa: " + error.message);
+      setErrorMessage("Erro ao adicionar tarefa ");
     }
   };
 
-  return (
+  return loading ? (
+    <>carregando...</>
+  ) : (
     <>
       <ModalWrapper open={open} setOpen={setOpen}>
         <form onSubmit={handleSubmit(submitHandler)}>
@@ -81,14 +104,15 @@ const AddTarefa = ({open, setOpen}) => {
               <select
                 className='w-full rounded bg-transparent px-3 py-2.5 2xl:py-3 border border-gray-300 placeholder-gray-400 text-gray-900 outline-none text-base focus:ring-2 ring-blue-300 w-full rounded'
                 id='atribuir'
-                value={team}
-                onChange={(e) => setTeam(e.target.value)}
+                value={selectedTeam} // Use o estado `selectedTeam` aqui
+                onChange={(e) => setSelectedTeam(e.target.value)}
               >
-                {team.map((time) => (
-                  <option key={time.id} value={time.id}>
-                    {time.data.nome_time}
-                  </option>
-                ))}
+                {team &&
+                  team.map((time) => (
+                    <option key={time.id} value={time.id}>
+                      {time.nome_time}
+                    </option>
+                  ))}
               </select>
             </div>
 

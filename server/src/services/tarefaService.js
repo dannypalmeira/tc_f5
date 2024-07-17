@@ -4,6 +4,7 @@ import {
   listaTarefaPorIdRepository,
   atualizarTarefaRepository,
   apagaTarefaPorIdRepository,
+  contaTarefaUserRepository,
 } from "../repositories/tarefaRepository.js";
 import {
   validarCamposObrigatoriosTarefa,
@@ -14,10 +15,13 @@ export const listaTarefaService = async () => {
   return res;
 };
 
-export const contaTarefauserService = async (id_user) => {
+export const contaTarefaUserService = async (id_user) => {
   if (!id_user) {
     throw new Error("Informe o id do usuario");
   }
+  const tarefas = await contaTarefaUserRepository(id_user);
+  console.log("tarefas", tarefas);
+  return tarefas;
 };
 export const cadastraTarefaService = async (body) => {
   const camposFaltando = validarCamposObrigatoriosTarefa(body);

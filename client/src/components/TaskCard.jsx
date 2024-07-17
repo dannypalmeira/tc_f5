@@ -1,11 +1,11 @@
 import clsx from "clsx";
-import React, { useState } from "react";
+import React, {useState} from "react";
 import {
   MdKeyboardArrowDown,
   MdKeyboardArrowUp,
   MdKeyboardDoubleArrowUp,
 } from "react-icons/md";
-import { BGS, PRIOTITYSTYELS, TASK_TYPE, formatDate } from "../utils";
+import {BGS, PRIOTITYSTYELS, TASK_TYPE, formatDate} from "../utils";
 import UserInfo from "./UserInfo";
 
 const ICONS = {
@@ -14,7 +14,7 @@ const ICONS = {
   BAIXA: <MdKeyboardArrowDown />,
 };
 
-const TaskCard = ({ tarefas }) => {
+const TaskCard = ({tarefas}) => {
   const [open, setOpen] = useState(false);
 
   return (
@@ -30,26 +30,26 @@ const TaskCard = ({ tarefas }) => {
             <span className='text-lg'>{ICONS[tarefas?.prazo]}</span>
             <span className='uppercase'>{tarefas?.prazo} Prioridade</span>
           </div>
-
         </div>
 
         <>
           <div className='flex items-center gap-2'>
             <div
-              className={clsx("w-4 h-4 rounded-full", TASK_TYPE[tarefas.situacao])}
+              className={clsx(
+                "w-4 h-4 rounded-full",
+                TASK_TYPE[tarefas.situacao]
+              )}
             />
             <h4 className='line-clamp-1 text-black'>{tarefas?.nome_tarefa}</h4>
           </div>
-          
         </>
 
         <div className='w-full border-t border-gray-200 my-2' />
         <div className='flex items-center justify-between mb-2'>
-        <span className='text-sm text-gray-600'>
+          <span className='text-sm text-gray-600'>
             {formatDate(new Date(tarefas?.data_ini))}
           </span>
           <div className='flex flex-row-reverse'>
-            
             {tarefas?.team?.map((m, index) => (
               <div
                 key={index}

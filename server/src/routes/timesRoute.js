@@ -9,5 +9,6 @@ timeRoutes.get("/:id", TimeController.listaTimePorId);
 timeRoutes.post("/", TimeController.cadastraTime);
 timeRoutes.put("/:id", TimeController.atualizarTime);
 timeRoutes.delete("/:id", TimeController.apagaTimePorId);
+timeRoutes.post("/:id", TimeController.buscaMembros);
 
 export default timeRoutes;

@@ -22,15 +22,6 @@ export default function Login() {
         if (!res.reloadUserInfo) {
           setIsSigningIn(false);
         }
-        const userData = res.reloadUserInfo;
-        setUser({
-          token: token,
-          email: userData.email,
-          nome: userData.nome,
-          sobrenome: userData.sobrenome,
-          tipo: userData.tipo,
-          time: userData.time,
-        });
         nav("/dashboard");
       }
     } catch (ex) {

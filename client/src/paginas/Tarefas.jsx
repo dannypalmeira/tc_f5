@@ -4,7 +4,7 @@ import Button from "../components/Buttons";
 import {IoMdAdd} from "react-icons/io";
 import Loading from "../components/Loader";
 import BoardView from "../components/BoardView";
-import {readAllData, updateData, deleteData} from "../funcoes/funcoes";
+import {readAllData} from "../funcoes/funcoes";
 import {useAuth} from "../contexts/authContext";
 import AddTarefa from "../components/tarefas/addTarefa";
 
@@ -29,27 +29,26 @@ const Tarefas = () => {
       }
     };
 
-    fetchTasks();
-  }, []);
-
+    //fetchTasks();
+  }, [user]);
   return loading ? (
     <div className='py-10'>
       <Loading />
+      carregando...
     </div>
   ) : (
     <>
       <div className='w-full'>
         <div className='flex items-center justify-between mb-4'>
           <h2 className={clsx("text-2xl font-semibold capitalize")}>Tarefas</h2>
-          {user.tipo === "admin" ||
-            (user.tipo === "adm" && (
-              <Button
-                onClick={() => setOpen(true)}
-                label='Criar Tarefa'
-                icon={<IoMdAdd className='text-lg' />}
-                className='flex flex-row-reverse gap-1 items-center bg-blue-600 text-white rounded-md py-2 2xl:py-2.5'
-              />
-            ))}
+          {(user.tipo === "admin" || user.tipo === "adm") && (
+            <Button
+              onClick={() => setOpen(true)}
+              label='Criar Tarefa'
+              icon={<IoMdAdd className='text-lg' />}
+              className='flex flex-row-reverse gap-1 items-center bg-blue-600 text-white rounded-md py-2 2xl:py-2.5'
+            />
+          )}
 
           <AddTarefa open={open} setOpen={setOpen} />
         </div>

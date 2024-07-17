@@ -33,3 +33,19 @@ export const apagaTarefaPorIdRepository = async (id) => {
   const tarefaDoc = await db.collection("tarefas").doc(id).delete();
   return tarefaDoc;
 };
+
+export const contaTarefaUserRepository = async (id_user) => {
+  let tarefas = [];
+  const snapshot = await db
+    .collection("tarefas")
+    .where("id_usu", "==", id_user)
+    .get();
+  if (snapshot.empty) return [];
+  snapshot.forEach((doc) => {
+    tarefas.push({
+      id: doc.id,
+      ...doc.data(),
+    });
+  });
+  return tarefas;
+};

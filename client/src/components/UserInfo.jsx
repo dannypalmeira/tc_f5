@@ -1,27 +1,27 @@
-import { Popover, Transition } from "@headlessui/react";
-import React, { useState, useEffect, Fragment } from "react";
-import { useAuth } from "../contexts/authContext";
-import { readAllData, updateData, deleteData } from "../funcoes/funcoes";
+import {Popover, Transition} from "@headlessui/react";
+import React, {useState, useEffect, Fragment} from "react";
+import {useAuth} from "../contexts/authContext";
+import {readAllData, updateData, deleteData} from "../funcoes/funcoes";
 
 const UserInfo = () => {
-  const { user } = useAuth();
+  const {user} = useAuth();
   const [teamMembers, setTeamMembers] = useState([]);
 
   useEffect(() => {
     const fetchTeamMembers = async () => {
       try {
-        const snapshot = await readAllData('tarefas');
+        const snapshot = await readAllData("tarefas");
         if (snapshot.exists()) {
           const data = snapshot.val();
-          const members = Object.values(data).map(team => ({
+          const members = Object.values(data).map((team) => ({
             id: team.id,
             nome: team.nome,
-            sobrenome: team.sobrenome
+            sobrenome: team.sobrenome,
           }));
           setTeamMembers(members);
         }
       } catch (error) {
-        console.error('Erro ao buscar membros do time:', error);
+        console.error("Erro ao buscar membros do time:", error);
       }
     };
 
@@ -34,7 +34,10 @@ const UserInfo = () => {
         {/* {({ open }) => ( */}
         <>
           <Popover.Button className='group inline-flex items-center outline-none'>
-            <span>{user?.nome[0]}{user?.sobrenome[0]}</span>
+            <span>
+              {user?.nome[0]}
+              {user?.sobrenome[0]}
+            </span>
           </Popover.Button>
 
           <Transition
@@ -50,7 +53,8 @@ const UserInfo = () => {
               <div className='flex items-center gap-4 rounded-lg shadow-lg bg-white p-8'>
                 <div className='w-16 h-16 bg-blue-600 rounded-full text-white flex items-center justify-center text-2xl '>
                   <span className='text-center font-bold'>
-                  {user?.nome[0]}{user?.sobrenome[0]}
+                    {user?.nome[0]}
+                    {user?.sobrenome[0]}
                   </span>
                 </div>
                 <div className='flex flex-col gap-y-1'>

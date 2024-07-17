@@ -9,6 +9,7 @@ import {
   listaTarefaPorIdService,
   atualizarTarefaService,
   apagaTarefaPorIdService,
+  contaTarefaUserService,
 } from "../services/tarefaService.js";
 class TarefaController {
   // consultar tarefas
@@ -34,7 +35,14 @@ class TarefaController {
   }
 
   static async contaTarefaUser(req, res) {
-    req;
+    const {id: id_user} = req.params;
+    try {
+      const tarefas = await contaTarefaUserService(id_user);
+      console.log("TAREFAS", tarefas);
+      res.status(200).send(tarefas);
+    } catch {
+      res.status(500).send("Não foi possivel buscar tarefas.");
+    }
   }
   // consulta tarefa através do ID
   static async listaTarefaPorId(req, res) {

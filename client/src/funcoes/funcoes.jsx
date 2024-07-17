@@ -107,11 +107,11 @@ export const listenToCollection = (collectionName, callback) => {
 //  mapear os campos do formulário para os campos da coleção
 export const mapFormDataToCollectionFields = (data) => {
   return {
-    nome_tarefa: data.nomeTarefa,
+    nome_tarefa: data.nome_tarefa,
     id_usu: data.id_usu, // Precisa ser atualizado com o ID do usuário correto
     id_time: data.id_time,
     situacao: data.situacao,
-    data_ini: data.data_tarefa,
+    data_ini: data.data_ini,
     descricao: data.descricao,
     prazo: data.prazo,
   };
