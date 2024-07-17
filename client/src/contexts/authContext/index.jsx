@@ -26,7 +26,6 @@ export function AuthProvider({children}) {
       if (currentUser) {
         setIsLoggedOut(false);
         onSnapshot(doc(db, "usuarios", currentUser.uid), (doc) => {
-          console.log("user", doc.data());
           const user = doc.data();
           setUser({
             id: user.uid,

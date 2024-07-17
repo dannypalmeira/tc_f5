@@ -104,18 +104,8 @@ export const listenToCollection = (collectionName, callback) => {
   });
 };
 
-export const addTarefa = async (tarefaData) => {
-  try {
-    const docRef = await addDoc(collection(db, "tarefas"), tarefaData);
-    return docRef;
-  } catch (error) {
-    throw new Error("Erro ao adicionar tarefa: " + error.message);
-  }
-};
-
 //  mapear os campos do formulário para os campos da coleção
 export const mapFormDataToCollectionFields = (data) => {
-  console.log(data);
   return {
     nome_tarefa: data.nomeTarefa,
     id_usu: data.id_usu, // Precisa ser atualizado com o ID do usuário correto

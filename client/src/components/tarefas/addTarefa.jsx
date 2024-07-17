@@ -2,17 +2,13 @@ import React, {Fragment, useEffect, useState} from "react";
 import {Listbox, Transition, Dialog} from "@headlessui/react";
 import {useForm} from "react-hook-form";
 import ModalWrapper from "../ModalWrapper";
-import {BsChevronExpand} from "react-icons/bs";
-import clsx from "clsx";
 import SelectList from "../SelectList";
 import Textbox from "../TextBox.jsx";
 import Button from "../Buttons.jsx";
 import {apiTimesUrl} from "../../../../server/src/funcoes/apiConfig.js";
-import {
-  addTarefa,
-  mapFormDataToCollectionFields,
-} from "../../funcoes/funcoes.jsx";
+import {mapFormDataToCollectionFields} from "../../funcoes/funcoes.jsx";
 import {useAuth} from "../../contexts/authContext/index.jsx";
+import {cadastraTarefa} from "../../services/tarefaService.js";
 
 const LISTA = ["PENDENTE", "EM ANDAMENTO", "FINALIZADA"];
 const PRIORIDADE = ["ALTA", "MÉDIA", "BAIXA"];
@@ -58,7 +54,6 @@ const AddTarefa = ({open, setOpen}) => {
     carregarTimesDisponiveis();
   }, [user]);
   const submitHandler = async (data) => {
-    console.log("user", user);
     setIsSubmitting(true);
 
     const formData = {
@@ -71,11 +66,14 @@ const AddTarefa = ({open, setOpen}) => {
     const tarefaData = mapFormDataToCollectionFields(formData);
 
     try {
-      await addTarefa(tarefaData);
+      const tar = await cadastraTarefa(tarefaData);
       alert("Tarefa criada com sucesso!");
       setOpen(false);
     } catch (error) {
       setErrorMessage(error.message);
+      setTimeout(() => {
+        setErrorMessage("");
+      }, 2600);
     } finally {
       setIsSubmitting(false);
     }
@@ -119,7 +117,6 @@ const AddTarefa = ({open, setOpen}) => {
                   value={time}
                   onChange={(e) => setTeam(e.target.value)}
                 >
-                  
                   {times.map((time) => (
                     <option key={time.id} value={time.id}>
                       {time.data.nome_time}
