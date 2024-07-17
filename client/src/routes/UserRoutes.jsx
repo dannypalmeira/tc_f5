@@ -1,5 +1,5 @@
 import React from "react";
-import UserDashboard from "../components/paginas/UserDashboard";
+import UserDashboard from "../paginas/UserDashboard";
 
 
 export default function UserRoutes() {

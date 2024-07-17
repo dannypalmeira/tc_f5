@@ -4,13 +4,12 @@ import { FaUser, FaUserLock } from "react-icons/fa";
 import { IoLogOutOutline } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/authContext";
-import { doSignOut } from "../funcoes/auth";
+import { doSignOut } from "../funcoes/auth"; 
 
 const UserAvatar = () => {
   const [open, setOpen] = useState(false);
   const [openPassword, setOpenPassword] = useState(false);
-  const { userLoggedIn } = useAuth();
-  const { currentUser } = useAuth();
+  const { user } = useAuth();
   const navigate = useNavigate();
 
    
@@ -20,7 +19,7 @@ const UserAvatar = () => {
         <Menu as='div' className='relative inline-block text-left'>
           <div>
             <Menu.Button className='w-10 h-10 2xl:w-12 2xl:h-12 items-center justify-center rounded-full bg-blue-600'>
-              <span className='text-white font-semibold'>eu</span>
+              <span className='text-white font-semibold'>{user?.nome[0]}{user?.sobrenome[0]}</span>
             </Menu.Button>
           </div>
 

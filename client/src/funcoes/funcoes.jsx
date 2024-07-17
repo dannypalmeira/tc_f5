@@ -83,7 +83,7 @@ export const readAllData = async (collectionName) => {
     const newDataArr = [];
     const querySnapshot = await getDocs(collection(db, collectionName));
     querySnapshot.forEach((doc) => {
-      console.log(doc.id, " => ", doc.data());
+      //console.log(doc.id, " => ", doc.data());
       newDataArr.push(doc.data());
     });
     return newDataArr;

@@ -1,7 +1,16 @@
-import React, {Fragment, useEffect, useState} from "react";
-import {Listbox, Transition, Dialog} from "@headlessui/react";
-import {useForm} from "react-hook-form";
+import React, { Fragment, useEffect, useState } from "react";
+import { Listbox, Transition, Dialog } from "@headlessui/react";
+import { useForm } from "react-hook-form";
 import ModalWrapper from "../ModalWrapper";
+<<<<<<< HEAD
+import { BsChevronExpand } from "react-icons/bs";
+import clsx from "clsx";
+import UserList from "./ListaUsuarios.jsx";
+import SelectList from "../SelectList";
+import Textbox from "../TextBox.jsx";
+import Button from "../Buttons.jsx";
+import { addTarefa } from "../../funcoes/funcoes.jsx";
+=======
 import SelectList from "../SelectList";
 import Textbox from "../TextBox.jsx";
 import Button from "../Buttons.jsx";
@@ -9,63 +18,45 @@ import {apiTimesUrl} from "../../../../server/src/funcoes/apiConfig.js";
 import {mapFormDataToCollectionFields} from "../../funcoes/funcoes.jsx";
 import {useAuth} from "../../contexts/authContext/index.jsx";
 import {cadastraTarefa} from "../../services/tarefaService.js";
+>>>>>>> f19ce9c66e7afa550663014f8900801c30502de0
 
 const LISTA = ["PENDENTE", "EM ANDAMENTO", "FINALIZADA"];
-const PRIORIDADE = ["ALTA", "MÉDIA", "BAIXA"];
+const PRIORIDADE = ["ALTA", "MEDIA", "BAIXA"];
 
-const AddTarefa = ({open, setOpen}) => {
+const AddTarefa = ({ open, setOpen }) => {
+  const tarefa = "";
+
   const {
     register,
     handleSubmit,
-    formState: {errors},
+    formState: { errors },
   } = useForm();
-  const [times, setTimes] = useState([]);
-  const [time, setTeam] = useState("");
-  const [situacao, setStage] = useState(LISTA[0]);
-  const [prioridade, setPriority] = useState(PRIORIDADE[2]);
+  const [team, setTeam] = useState(tarefa?.team || []);
+  const [situacao, setStage] = useState(tarefa?.situacao?.toUpperCase() || LISTA[0]);
+  const [prioridades, setPrioridades] = useState(tarefa?.prazo?.toUpperCase() || PRIORIDADE[2]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-  const [loading, setLoading] = useState(true);
 
-  const {user} = useAuth();
-  useEffect(() => {
-    if (user) {
-      setLoading(false);
-    }
-
-    const carregarTimesDisponiveis = async () => {
-      try {
-        const response = await fetch(apiTimesUrl);
-        if (!response.ok) {
-          throw new Error("Erro ao buscar times disponíveis");
-        }
-
-        const timesData = await response.json();
-        setTimes(timesData);
-        setTeam(timesData.length > 0 ? timesData[0].id : "");
-      } catch (error) {
-        console.error("Erro ao carregar nomes de times disponíveis:", error);
-        alert(
-          "Erro ao carregar nomes de times disponíveis. Por favor, tente novamente."
-        );
-      }
-    };
-
-    carregarTimesDisponiveis();
-  }, [user]);
   const submitHandler = async (data) => {
     setIsSubmitting(true);
-
-    const formData = {
-      ...data,
-      id_time: time,
-      situacao,
-      prazo: prioridade,
-      id_usu: user.id,
-    };
-    const tarefaData = mapFormDataToCollectionFields(formData);
-
+  
     try {
+<<<<<<< HEAD
+      await addTarefa({
+        nome_tarefa: data.nome_tarefa,
+        team: team,
+        situacao: situacao,
+        data_ini: data.data_ini,
+        descricao: data.descricao,
+        prazo: prioridades,
+      });
+  
+      setIsSubmitting(false);
+      setOpen(false); 
+       
+      reset({});
+    } catch (error) {
+=======
       const tar = await cadastraTarefa(tarefaData);
       alert("Tarefa criada com sucesso!");
       setOpen(false);
@@ -75,15 +66,14 @@ const AddTarefa = ({open, setOpen}) => {
         setErrorMessage("");
       }, 2600);
     } finally {
+>>>>>>> f19ce9c66e7afa550663014f8900801c30502de0
       setIsSubmitting(false);
+      setErrorMessage('Erro ao adicionar tarefa: ' + error.message);
     }
   };
 
   return (
     <>
-      {loading ? (
-        <div> Carregando...</div>
-      ) : (
         <ModalWrapper open={open} setOpen={setOpen}>
           <form onSubmit={handleSubmit(submitHandler)}>
             <Dialog.Title
@@ -96,7 +86,7 @@ const AddTarefa = ({open, setOpen}) => {
               <Textbox
                 placeholder='Nome Tarefa'
                 type='text'
-                name='nomeTarefa'
+                name='nome_tarefa'
                 label='Nome Tarefa'
                 className='w-full rounded'
                 register={register}
@@ -104,6 +94,9 @@ const AddTarefa = ({open, setOpen}) => {
                 error={errors.nomeTarefa}
               />
 
+<<<<<<< HEAD
+              <UserList setTeam={setTeam} team={team} />
+=======
               <div>
                 <label
                   htmlFor='atribuir'
@@ -124,6 +117,7 @@ const AddTarefa = ({open, setOpen}) => {
                   ))}
                 </select>
               </div>
+>>>>>>> f19ce9c66e7afa550663014f8900801c30502de0
 
               <div className='flex gap-4'>
                 <SelectList
@@ -136,12 +130,12 @@ const AddTarefa = ({open, setOpen}) => {
                   <Textbox
                     placeholder='Data'
                     type='date'
-                    name='data_tarefa'
+                    name='data_ini'
                     label='Data da Tarefa'
                     className='w-full rounded'
                     register={register}
                     required
-                    error={errors.data_tarefa}
+                    error={errors.data_ini}
                   />
                 </div>
               </div>
@@ -161,8 +155,8 @@ const AddTarefa = ({open, setOpen}) => {
                 <SelectList
                   label='Prioridade'
                   lists={PRIORIDADE}
-                  selected={prioridade}
-                  setSelected={setPriority}
+                  selected={prioridades}
+                  setSelected={setPrioridades}
                 />
               </div>
 
@@ -187,7 +181,6 @@ const AddTarefa = ({open, setOpen}) => {
             </div>
           </form>
         </ModalWrapper>
-      )}
     </>
   );
 };

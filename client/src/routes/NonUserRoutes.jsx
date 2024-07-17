@@ -1,7 +1,7 @@
 import React from "react";
 import { Route, Routes } from "react-router-dom";
-import Login from "../components/paginas/Login";
-import CreateUser from "../components/paginas/CreateUser";
+import Login from "../paginas/Login";
+import CreateUser from "../paginas/CreateUser";
 
 export default function NonUserRoutes() {
     return (
