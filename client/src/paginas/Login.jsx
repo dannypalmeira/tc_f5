@@ -28,6 +28,8 @@ export default function Login() {
           email: userData.email,
           nome: userData.nome,
           sobrenome: userData.sobrenome,
+          tipo: userData.tipo,
+          time: userData.time,
         });
         nav("/dashboard");
       }

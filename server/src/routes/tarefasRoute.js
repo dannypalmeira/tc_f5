@@ -7,6 +7,7 @@ const tarefaRoutes = express.Router();
 tarefaRoutes.get("/", TarefaController.listaTarefa);
 tarefaRoutes.post("/", TarefaController.cadastraTarefa);
 tarefaRoutes.get("/:id", TarefaController.listaTarefaPorId);
+tarefaRoutes.get("/user/:id", TarefaController.contaTarefaUser);
 tarefaRoutes.put("/:id", TarefaController.atualizarTarefa);
 tarefaRoutes.delete("/:id", TarefaController.apagaTarefaPorId);
 

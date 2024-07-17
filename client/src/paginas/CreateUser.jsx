@@ -1,7 +1,7 @@
 import React, {useState} from "react";
 import {Link} from "react-router-dom";
 import {signUp} from "../funcoes/auth";
-
+import {useNavigate} from "react-router-dom";
 export default function CreateUser() {
   const [nome, setFirstName] = useState("");
   const [sobrenome, setLastName] = useState("");
@@ -10,11 +10,14 @@ export default function CreateUser() {
   const [confirmaSenha, setConfirmPassword] = useState("");
   const [isRegistering, setIsRegistering] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const nav = useNavigate();
 
   const userData = {
     nome,
     sobrenome,
     email,
+    tipo: "operador",
+    time: [],
   };
 
   const handleCreateUser = async (e) => {
@@ -23,6 +26,7 @@ export default function CreateUser() {
       setIsRegistering(true);
       await signUp(email, password, userData);
     }
+    nav("/dashboard");
   };
 
   return (
@@ -124,7 +128,7 @@ export default function CreateUser() {
                   : "bg-indigo-600 hover:bg-indigo-700 hover:shadow-xl transition duration-300"
               }`}
             >
-              {isRegistering ? "Entrando..." : "Cadastre-se"}
+              {isRegistering ? "Cadastrando..." : "Cadastre-se"}
             </button>
             <div className='text-sm text-center'>
               Já tem uma conta? {"   "}

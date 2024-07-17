@@ -35,7 +35,7 @@ const AddTarefa = ({open, setOpen}) => {
     setIsSubmitting(true);
 
     try {
-      const tar = await cadastraTarefa(tarefaData);
+      await cadastraTarefa(tarefaData);
       alert("Tarefa criada com sucesso!");
       setOpen(false);
     } catch (error) {
@@ -81,10 +81,10 @@ const AddTarefa = ({open, setOpen}) => {
               <select
                 className='w-full rounded bg-transparent px-3 py-2.5 2xl:py-3 border border-gray-300 placeholder-gray-400 text-gray-900 outline-none text-base focus:ring-2 ring-blue-300 w-full rounded'
                 id='atribuir'
-                value={time}
+                value={team}
                 onChange={(e) => setTeam(e.target.value)}
               >
-                {times.map((time) => (
+                {team.map((time) => (
                   <option key={time.id} value={time.id}>
                     {time.data.nome_time}
                   </option>

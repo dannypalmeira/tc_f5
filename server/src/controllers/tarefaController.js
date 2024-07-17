@@ -33,6 +33,9 @@ class TarefaController {
     }
   }
 
+  static async contaTarefaUser(req, res) {
+    req;
+  }
   // consulta tarefa através do ID
   static async listaTarefaPorId(req, res) {
     const {id} = req.params;

@@ -14,6 +14,11 @@ export const listaTarefaService = async () => {
   return res;
 };
 
+export const contaTarefauserService = async (id_user) => {
+  if (!id_user) {
+    throw new Error("Informe o id do usuario");
+  }
+};
 export const cadastraTarefaService = async (body) => {
   const camposFaltando = validarCamposObrigatoriosTarefa(body);
   const camposInvalidos = validarCamposValidosTarefa(body);
