@@ -18,6 +18,8 @@ const Tarefas = () => {
   useEffect(() => {
     if (user) {
       setLoading(false);
+    } else {
+      return;
     }
     const buscaTarefas = async () => {
       const tarefas = await buscaTarefasUser(user.id);
