@@ -4,7 +4,7 @@ import Button from "../components/Buttons";
 import {IoMdAdd} from "react-icons/io";
 import Loading from "../components/Loader";
 import BoardView from "../components/BoardView";
-import {readAllData} from "../funcoes/funcoes";
+import {buscaTarefasUser} from "../services/tarefaService";
 import {useAuth} from "../contexts/authContext";
 import AddTarefa from "../components/tarefas/addTarefa";
 
@@ -19,17 +19,11 @@ const Tarefas = () => {
     if (user) {
       setLoading(false);
     }
-    const fetchTasks = async () => {
-      try {
-        const dadosTarefa = await readAllData("tarefas");
-        taskData(dadosTarefa);
-        //console.log('Tarefa:', dadosTarefa);
-      } catch (error) {
-        console.error("Erro ao carregar tarefas:", error);
-      }
+    const buscaTarefas = async () => {
+      const tarefas = await buscaTarefasUser(user.id);
+      taskData(tarefas.data);
     };
-
-    //fetchTasks();
+    buscaTarefas();
   }, [user]);
   return loading ? (
     <div className='py-10'>

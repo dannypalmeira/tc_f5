@@ -10,7 +10,6 @@ class TimeController {
   static async listaTime(req, res) {
     try {
       const times = await buscaTimesService();
-      console.log("timeergwergs", times);
       return res.status(200).send(times);
     } catch (error) {
       res.status(500).send("Erro ao buscar times.");

@@ -20,7 +20,7 @@ const AddTarefa = ({open, setOpen}) => {
   const [prioridades, setPrioridades] = useState(PRIORIDADE[2]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-  const [selectedTeam, setSelectedTeam] = useState("");
+  const [selectedTeam, setSelectedTeam] = useState();
   let nomeTimes = [];
 
   useEffect(() => {
@@ -28,11 +28,13 @@ const AddTarefa = ({open, setOpen}) => {
       setLoading(false);
     }
     buscatimesconst();
+    setSelectedTeam(team[0]?.id);
   }, [user]);
 
   const {
     register,
     handleSubmit,
+    reset,
     formState: {errors},
   } = useForm();
   const buscatimesconst = async () => {
@@ -42,7 +44,7 @@ const AddTarefa = ({open, setOpen}) => {
   };
   const submitHandler = async (data) => {
     setIsSubmitting(true);
-
+    selectedTeam;
     const formData = {
       id_usu: user.id,
       nome_tarefa: data.nome_tarefa,
@@ -54,10 +56,10 @@ const AddTarefa = ({open, setOpen}) => {
     };
 
     const tarefaData = mapFormDataToCollectionFields(formData);
-    console.log("tarefa", tarefaData, formData, data, user);
     try {
       await cadastraTarefa(tarefaData);
       alert("Tarefa criada com sucesso!");
+      limpaForm();
       setOpen(false);
     } catch (error) {
       setErrorMessage(error.message);
@@ -66,8 +68,18 @@ const AddTarefa = ({open, setOpen}) => {
       }, 2600);
     } finally {
       setIsSubmitting(false);
-      setErrorMessage("Erro ao adicionar tarefa ");
     }
+  };
+
+  const limpaForm = () => {
+    reset({
+      nome_tarefa: "",
+      data_ini: "",
+      descricao: "",
+    });
+    setSelectedTeam("");
+    setStage(LISTA[0]);
+    setPrioridades(PRIORIDADE[2]);
   };
 
   return loading ? (
