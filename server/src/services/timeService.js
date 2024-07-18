@@ -39,5 +39,5 @@ export const apagaTimePorIdService = async (id) => {
     throw new Error("Campo faltando!");
   }
   const apagado = await apagaTimePorIdRepository(id);
-  console.log("apagado", apagado);
+  return apagado;
 };

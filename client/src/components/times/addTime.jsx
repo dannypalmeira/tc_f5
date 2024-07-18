@@ -67,7 +67,7 @@ const AddTime = ({open, setOpen}) => {
           </Dialog.Title>
           <div className='mt-2 flex flex-col gap-6'>
             <Textbox
-              placeholder='Nome Tarefa'
+              placeholder='Nome Time'
               type='text'
               name='nome_time'
               label='Nome Time'

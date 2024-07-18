@@ -111,7 +111,6 @@ class TimeController {
   static async buscaMembros(req, res) {
     try {
       const membros = await buscaMembrosService(req.body);
-      console.log("controller", membros);
       res.status(200).send(membros);
     } catch {
       res.status(500).send("Erro ao buscar membros");

@@ -42,7 +42,6 @@ export const apagaTimePorIdRepository = async (id) => {
 
   const batch = db.batch();
   usuarios.forEach((userId) => {
-    console.log(userId);
     const userDocRef = db.collection("usuarios").doc(userId);
     batch.update(userDocRef, {
       time: admin.firestore.FieldValue.arrayRemove(id),
