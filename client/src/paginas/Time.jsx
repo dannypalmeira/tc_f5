@@ -1,49 +1,57 @@
-import React, { useState, useEffect } from "react";
+import React, {useState, useEffect} from "react";
 import Button from "../components/Buttons";
-import { IoMdAdd } from "react-icons/io";
+import {IoMdAdd} from "react-icons/io";
 import clsx from "clsx";
-import ConfirmatioDialog, { UserAction } from "../components/Dialogs";
-import { readAllData, updateData, deleteData } from "../funcoes/funcoes";
+import ConfirmatioDialog, {UserAction} from "../components/Dialogs";
+import {readAllData, updateData, deleteData} from "../funcoes/funcoes";
+import {useAuth} from "../contexts/authContext";
+import {buscatimes} from "../services/timeService";
 
 const TimeLista = () => {
   const [openDialog, setOpenDialog] = useState(false);
   const [open, setOpen] = useState(false);
   const [openAction, setOpenAction] = useState(false);
   const [selected, setSelected] = useState(null);
-  const [users, setUsers] = useState([]);
-
+  const [times, setTimes] = useState([]);
+  const [loadng, setLoading] = useState(true);
+  const {user} = useAuth();
   useEffect(() => {
-    const fetchUsers = async () => {
-        try {
-          const usersData = await readAllData('usuarios');
-          setUsers(usersData);
-        } catch (error) {
-          console.error('Erro ao carregar usuários:', error);
-        }
-      };
-  
-      fetchUsers();
-    }, []);
+    if (user) {
+      setLoading(false);
+    }
+    const fetchtimes = async () => {
+      try {
+        const times = await buscatimes();
+        console.log(times);
+        setTimes(times);
+      } catch (error) {
+        console.error("Erro ao carregar usuários:", error);
+      }
+    };
+    fetchtimes();
+  }, [user]);
 
   const userActionHandler = async (user) => {
     try {
-      await updateData('usuarios', user.id, { isActive: !user.isActive });
-      console.log(`Usuário ${user.nome} ${user.sobrenome} atualizado com sucesso!`);
-      const updatedUsers = await readAllData('usuarios');
+      await updateData("usuarios", user.id, {isActive: !user.isActive});
+      console.log(
+        `Usuário ${user.nome} ${user.sobrenome} atualizado com sucesso!`
+      );
+      const updatedUsers = await readAllData("usuarios");
       setUsers(updatedUsers);
     } catch (error) {
-      console.error('Erro ao atualizar usuário:', error);
+      console.error("Erro ao atualizar usuário:", error);
     }
   };
 
   const deleteHandler = async () => {
     try {
-      await deleteData('usuarios', selected);
+      await deleteData("usuarios", selected);
       console.log(`Usuário com ID ${selected} excluído com sucesso!`);
-      const updatedUsers = await readAllData('usuarios'); 
+      const updatedUsers = await readAllData("usuarios");
       setUsers(updatedUsers);
     } catch (error) {
-      console.error('Erro ao excluir usuário:', error);
+      console.error("Erro ao excluir usuário:", error);
     }
   };
 
@@ -60,42 +68,37 @@ const TimeLista = () => {
   const TableHeader = () => (
     <thead className='border-b border-gray-300'>
       <tr className='text-black text-left'>
-        <th className='py-2'>Nome Completo</th>
-        <th className='py-2'>Email</th>
+        <th className='py-2'>Nome Time</th>
       </tr>
     </thead>
   );
 
-  const TableRow = ({ user }) => (
+  const TableRow = ({time}) => (
     <tr className='border-b border-gray-200 text-gray-600 hover:bg-gray-400/10'>
       <td className='p-2'>
         <div className='flex items-center gap-3'>
           <div className='w-9 h-9 rounded-full text-white flex items-center justify-center text-sm bg-blue-700'>
-            <span className='text-xs md:text-sm text-center'>             
-            {user.nome ? user.nome.charAt(0).toUpperCase() : ''}
-            {user.sobrenome ? user.sobrenome.charAt(0).toUpperCase() : ''}
+            <span className='text-xs md:text-sm text-center'>
+              {time ? time.nome_time.charAt(0).toUpperCase() : ""}
             </span>
           </div>
-          {user.nome}
+          {time.nome_time}
         </div>
       </td>
-
-      <td className='p-2'>{user.email || "user.emal.com"}</td>
-
 
       <td className='p-2 flex gap-4 justify-end'>
         <Button
           className='text-blue-600 hover:text-blue-500 font-semibold sm:px-0'
           label='Edit'
           type='button'
-          onClick={() => editClick(user)}
+          onClick={() => editClick(time)}
         />
 
         <Button
           className='text-red-700 hover:text-red-500 font-semibold sm:px-0'
           label='Delete'
           type='button'
-          onClick={() => deleteClick(user?.uid)}
+          onClick={() => deleteClick(time?.id)}
         />
       </td>
     </tr>
@@ -105,7 +108,9 @@ const TimeLista = () => {
     <>
       <div className='w-full md:px-1 px-0 mb-6'>
         <div className='flex items-center justify-between mb-8'>
-        <h2 className={clsx("text-2xl font-semibold capitalize")}>Membros do Time</h2>
+          <h2 className={clsx("text-2xl font-semibold capitalize")}>
+            Membros do Time
+          </h2>
           <Button
             label='Add New User'
             icon={<IoMdAdd className='text-lg' />}
@@ -119,8 +124,8 @@ const TimeLista = () => {
             <table className='w-full mb-5'>
               <TableHeader />
               <tbody>
-                {users?.map((user, index) => (
-                  <TableRow key={index} user={user} />
+                {times?.map((time, index) => (
+                  <TableRow key={index} time={time} />
                 ))}
               </tbody>
             </table>

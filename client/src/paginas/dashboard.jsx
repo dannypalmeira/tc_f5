@@ -56,18 +56,21 @@ const Dashboard = () => {
       label: "TAREFAS COMPLETADAS",
       icon: <MdAdminPanelSettings />,
       bg: "bg-[#0f766e]",
+      total: tarefas.completas,
     },
     {
       _id: "3",
       label: "TAREFAS EM ANDAMENTO",
       icon: <LuClipboardEdit />,
       bg: "bg-[#f59e0b]",
+      total: tarefas.andamento,
     },
     {
       _id: "4",
       label: "PENDÊNCIAS",
       icon: <FaArrowsToDot />,
       bg: "bg-[#be185d]" || 0,
+      total: tarefas.pendente,
     },
   ];
   const Card = ({label, bg, icon, total}) => {
