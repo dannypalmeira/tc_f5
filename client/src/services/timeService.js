@@ -10,3 +10,8 @@ export const buscatimes = async () => {
 export const deleteTime = async (id_time) => {
   const deletado = await axios.delete(`${baseUrl}/times/${id_time}`);
 };
+
+export const criaTime = async (time) => {
+  const timec = await axios.post(`${baseUrl}/times`, time);
+  console.log("time", timec);
+};

@@ -35,6 +35,7 @@ class TimeController {
 
     try {
       const {usuarios, nome_time} = req.body;
+
       const time = {usuarios, nome_time};
 
       const timesRef = await db.collection("times").add(time);

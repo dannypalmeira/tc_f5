@@ -2,12 +2,12 @@ import React, {useState, useEffect} from "react";
 import Button from "../components/Buttons";
 import {IoMdAdd} from "react-icons/io";
 import clsx from "clsx";
-import ConfirmatioDialog, {UserAction} from "../components/Dialogs";
+import {UserAction} from "../components/Dialogs";
 import {readAllData, updateData, deleteData} from "../funcoes/funcoes";
 import {useAuth} from "../contexts/authContext";
 import {deleteTime, buscatimes} from "../services/timeService";
-import Loading from "../components/Loader.jsx";
 import ConfirmatioDeletTime from "../components/times/Dialog.jsx";
+import AddTime from "../components/times/addTime.jsx";
 
 const TimeLista = () => {
   const [openDialog, setOpenDialog] = useState(false);
@@ -20,6 +20,8 @@ const TimeLista = () => {
   useEffect(() => {
     if (user) {
       setLoading(false);
+    } else {
+      return;
     }
     const fetchtimes = async () => {
       try {
@@ -47,7 +49,6 @@ const TimeLista = () => {
 
   const deleteHandler = async () => {
     try {
-      console.log(`Time com ID ${selected} excluído com sucesso!`);
       const deleted = await deleteTime(selected);
       setOpenDialog(false);
     } catch (error) {
@@ -106,7 +107,7 @@ const TimeLista = () => {
   );
 
   return loadng ? (
-    <Loading />
+    <>carregando</>
   ) : (
     <>
       <div className='w-full md:px-1 px-0 mb-6'>
@@ -137,7 +138,7 @@ const TimeLista = () => {
           </div>
         </div>
       </div>
-
+      <AddTime open={open} setOpen={setOpen} />
       <ConfirmatioDeletTime
         open={openDialog}
         setOpen={setOpenDialog}

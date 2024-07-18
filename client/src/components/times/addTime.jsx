@@ -2,22 +2,55 @@ import React, {useEffect, useState} from "react";
 import ModalWrapper from "../ModalWrapper";
 import {useAuth} from "../../contexts/authContext/index.jsx";
 import Textbox from "../TextBox.jsx";
+import {useForm} from "react-hook-form";
 import Button from "../Buttons.jsx";
+import {Dialog} from "@headlessui/react";
+import {criaTime} from "../../services/timeService.js";
 
-const addTime = async () => {
+const AddTime = ({open, setOpen}) => {
   const {user} = useAuth();
   const [loading, setLoading] = useState(true);
-
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
   useEffect(() => {
     if (user) {
       setLoading(false);
+    } else {
+      return;
     }
-    buscatimesconst();
-    setSelectedTeam(team[0]?.id);
   }, [user]);
 
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: {errors},
+  } = useForm();
+
+  const submitHandler = async (data) => {
+    setIsSubmitting(true);
+    try {
+      const time = {
+        nome_time: data.nome_time,
+        usuarios: [user.id],
+      };
+      const timecriado = await criaTime(time);
+      console.log("time", timecriado);
+      reset();
+      // Fechar o modal
+      setOpen(false);
+    } catch {
+      setErrorMessage("Erro ao adicionar time.");
+      setTimeout(() => {
+        setErrorMessage("");
+      }, 2600);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return loading ? (
-    <>carregando</>
+    <>carregando...</>
   ) : (
     <>
       <ModalWrapper open={open} setOpen={setOpen}>
@@ -26,82 +59,19 @@ const addTime = async () => {
             as='h2'
             className='text-base font-bold leading-6 text-gray-900 mb-4'
           >
-            ADICIONAR TAREFA
+            ADICIONAR Time
           </Dialog.Title>
           <div className='mt-2 flex flex-col gap-6'>
             <Textbox
               placeholder='Nome Tarefa'
               type='text'
-              name='nome_tarefa'
-              label='Nome Tarefa'
+              name='nome_time'
+              label='Nome Time'
               className='w-full rounded'
               register={register}
               required
-              error={errors.nomeTarefa}
+              error={errors.nome_time}
             />
-
-            <div>
-              <label
-                htmlFor='atribuir'
-                className='block text-sm font-medium text-gray-700'
-              >
-                Atribuir tarefa a:
-              </label>
-              <select
-                className='w-full rounded bg-transparent px-3 py-2.5 2xl:py-3 border border-gray-300 placeholder-gray-400 text-gray-900 outline-none text-base focus:ring-2 ring-blue-300 w-full rounded'
-                id='atribuir'
-                value={selectedTeam} // Use o estado `selectedTeam` aqui
-                onChange={(e) => setSelectedTeam(e.target.value)}
-              >
-                {team &&
-                  team.map((time) => (
-                    <option key={time.id} value={time.id}>
-                      {time.nome_time}
-                    </option>
-                  ))}
-              </select>
-            </div>
-
-            <div className='flex gap-4'>
-              <SelectList
-                label='Situação'
-                lists={LISTA}
-                selected={situacao}
-                setSelected={setStage}
-              />
-              <div className='w-full'>
-                <Textbox
-                  placeholder='Data'
-                  type='date'
-                  name='data_ini'
-                  label='Data da Tarefa'
-                  className='w-full rounded'
-                  register={register}
-                  required
-                  error={errors.data_ini}
-                />
-              </div>
-            </div>
-
-            <Textbox
-              placeholder='Descrição'
-              type='text'
-              name='descricao'
-              label='Descrição'
-              className='w-full rounded'
-              register={register}
-              required
-              error={errors.descricao}
-            />
-
-            <div className='flex gap-4'>
-              <SelectList
-                label='Prioridade'
-                lists={PRIORIDADE}
-                selected={prioridades}
-                setSelected={setPrioridades}
-              />
-            </div>
 
             {errorMessage && <div className='text-red-500'>{errorMessage}</div>}
 
@@ -125,3 +95,5 @@ const addTime = async () => {
     </>
   );
 };
+
+export default AddTime;

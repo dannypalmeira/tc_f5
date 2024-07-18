@@ -45,7 +45,6 @@ const AddTarefa = ({open, setOpen}) => {
   };
   const submitHandler = async (data) => {
     setIsSubmitting(true);
-    selectedTeam;
     const formData = {
       id_usu: user.id,
       nome_tarefa: data.nome_tarefa,
