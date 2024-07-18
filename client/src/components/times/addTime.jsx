@@ -5,7 +5,7 @@ import Textbox from "../TextBox.jsx";
 import {useForm} from "react-hook-form";
 import Button from "../Buttons.jsx";
 import {Dialog} from "@headlessui/react";
-import {criaTime} from "../../services/timeService.js";
+import {criaTime,usuarioPertenceATime} from "../../services/timeService.js";
 import {useNavigate} from "react-router-dom";
 
 const AddTime = ({open, setOpen}) => {
@@ -13,7 +13,9 @@ const AddTime = ({open, setOpen}) => {
   const [loading, setLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [usuarios, setUsuarios] = useState([""]);
   const nav = useNavigate();
+
   useEffect(() => {
     if (user) {
       setLoading(false);
@@ -21,6 +23,24 @@ const AddTime = ({open, setOpen}) => {
       return;
     }
   }, [user]);
+
+// adiciona e remove usuarios
+  const addUsuarioField = () => {
+    if (usuarios.length < 4) {
+      setUsuarios([...usuarios, ""]);
+    }
+  };
+  
+  const removeUsuarioField = (index) => {
+    setUsuarios(usuarios.filter((_, i) => i !== index));
+  };
+  
+   const handleUsuarioChange = (index, value) => {
+    const newUsuarios = [...usuarios];
+    newUsuarios[index] = value;
+    setUsuarios(newUsuarios);
+  };
+
 
   const {
     register,
@@ -32,24 +52,33 @@ const AddTime = ({open, setOpen}) => {
   const submitHandler = async (data) => {
     setIsSubmitting(true);
     try {
+
+      // Verifica se algum usuário já pertence a outro time
+      for (let i = 0; i < usuarios.length; i++) {
+        const usuario = data[`usuario_${i}`];
+        if (await usuarioPertenceATime(usuario)) {
+          throw new Error(`O usuário ${usuario} já pertence a um time.`);
+        }
+      }
+
+
       const time = {
         nome_time: data.nome_time,
-        usuarios: [user.id],
+        usuarios: usuarios.map((usuario, index) => data[`usuario_${index}`]), 
       };
-      const timecriado = await criaTime(time);
+      //não estava sendo usado const timecriado =
+       await criaTime(time);
 
       reset();
+      setUsuarios([""]); // usuario
       nav("/time");
       // Fechar o modal
       setOpen(false);
-    } catch {
-      setErrorMessage("Erro ao adicionar time.");
-      setTimeout(() => {
-        setErrorMessage("");
-      }, 2600);
+    } catch (error) {
+      setErrorMessage(error.message || "Erro ao adicionar time.");
     } finally {
       setIsSubmitting(false);
-      setOpen(false);
+      
     }
   };
 
@@ -76,6 +105,36 @@ const AddTime = ({open, setOpen}) => {
               required
               error={errors.nome_time}
             />
+
+            {usuarios.map((usuario, index) => ( 
+            <div key={index} className='flex items-center gap-2'>
+              <Textbox
+                placeholder='Usuário'
+                type='text'
+                name={`usuario_${index}`}
+                label={`Usuário ${index + 1}`}
+                className='w-full rounded'
+                register={register}
+                required
+                error={errors[`usuario_${index}`]}
+              />
+              <Button
+                type='button'
+                className='bg-red-600 px-4 text-sm font-semibold text-white hover:bg-red-700'
+                onClick={() => removeUsuarioField(index)}
+                label='Remover'
+              />
+              </div>
+          ))}
+              {usuarios.length < 4 && (
+            <Button
+              type='button'
+              className='bg-green-600 px-4 text-sm font-semibold text-white hover:bg-green-700'
+              onClick={addUsuarioField}
+              label='Adicionar Usuário'
+            />
+          )}
+            
 
             {errorMessage && <div className='text-red-500'>{errorMessage}</div>}
 
