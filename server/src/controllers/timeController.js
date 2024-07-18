@@ -5,6 +5,7 @@ import {
 } from "../models/Times.js";
 import {
   buscaTimesService,
+  apagaTimePorIdService,
   cadastraTimeService,
 } from "../services/timeService.js";
 class TimeController {
@@ -22,7 +23,7 @@ class TimeController {
   static async cadastraTime(req, res) {
     try {
       const time = await cadastraTimeService(req.body);
-      res.status(201).send(`Time criado com ID: ${time.nome_time}`);
+      res.status(201).send(`Time criado com nome: ${time.nome_time}`);
     } catch (error) {
       console.error("Erro ao criar time:", error);
       res.status(500).send("Erro ao criar time. Por favor, tente novamente.");
@@ -99,14 +100,7 @@ class TimeController {
     const {id} = req.params;
 
     try {
-      const timeRef = db.collection("times").doc(id);
-      const timeDoc = await timeRef.get();
-
-      if (!timeDoc.exists) {
-        return res.status(404).send("Time não encontrado.");
-      }
-
-      await timeRef.delete();
+      await apagaTimePorIdService(id);
       res.status(200).json(`Time com ID: ${id} deletado com sucesso.`);
     } catch (error) {
       console.error("Erro ao deletar time:", error);

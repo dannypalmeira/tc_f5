@@ -1,6 +1,7 @@
 import {
   buscaTimesRepository,
   cadastraTimeRepository,
+  apagaTimePorIdRepository,
 } from "../repositories/timeRepository.js";
 import {
   validarCamposObrigatoriosTime,
@@ -22,17 +23,21 @@ export const cadastraTimeService = async (body) => {
   const camposInvalidos = validarCamposValidosTime(body);
 
   if (camposFaltando.length > 0) {
-    return res
-      .status(400)
-      .json({error: `Campos faltando: ${camposFaltando.join(", ")}`});
+    throw new Error(`Campos faltando: ${camposFaltando.join(", ")}`);
   }
 
   if (camposInvalidos.length > 0) {
-    return res
-      .status(400)
-      .json({error: `Campos inválidos: ${camposInvalidos.join(", ")}`});
+    throw new Error(`Campos inválidos: ${camposInvalidos.join(", ")}`);
   }
 
   const time = cadastraTimeRepository(body);
   return time;
+};
+
+export const apagaTimePorIdService = async (id) => {
+  if (!id) {
+    throw new Error("Campo faltando!");
+  }
+  const apagado = await apagaTimePorIdRepository(id);
+  console.log("apagado", apagado);
 };
