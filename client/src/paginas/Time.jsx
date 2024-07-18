@@ -8,15 +8,16 @@ import {useAuth} from "../contexts/authContext";
 import {deleteTime, buscatimes} from "../services/timeService";
 import ConfirmatioDeletTime from "../components/times/Dialog.jsx";
 import AddTime from "../components/times/addTime.jsx";
+import {useNavigate} from "react-router-dom";
 
 const TimeLista = () => {
   const [openDialog, setOpenDialog] = useState(false);
   const [open, setOpen] = useState(false);
-  const [openAction, setOpenAction] = useState(false);
   const [selected, setSelected] = useState(null);
   const [times, setTimes] = useState([]);
   const [loadng, setLoading] = useState(true);
   const {user} = useAuth();
+  const nav = useNavigate();
   useEffect(() => {
     if (user) {
       setLoading(false);
@@ -32,20 +33,7 @@ const TimeLista = () => {
       }
     };
     fetchtimes();
-  }, [user]);
-
-  const userActionHandler = async (user) => {
-    try {
-      await updateData("usuarios", user.id, {isActive: !user.isActive});
-      console.log(
-        `Usuário ${user.nome} ${user.sobrenome} atualizado com sucesso!`
-      );
-      const updatedUsers = await readAllData("usuarios");
-      setUsers(updatedUsers);
-    } catch (error) {
-      console.error("Erro ao atualizar usuário:", error);
-    }
-  };
+  }, [user, open, openDialog]);
 
   const deleteHandler = async () => {
     try {
@@ -63,7 +51,7 @@ const TimeLista = () => {
 
   const editClick = (user) => {
     setSelected(user);
-    setOpen(true);
+    setOpenEdit(true);
   };
 
   const TableHeader = () => (
@@ -143,12 +131,6 @@ const TimeLista = () => {
         open={openDialog}
         setOpen={setOpenDialog}
         onClick={deleteHandler}
-      />
-
-      <UserAction
-        open={openAction}
-        setOpen={setOpenAction}
-        onClick={userActionHandler}
       />
     </>
   );

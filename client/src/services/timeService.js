@@ -13,5 +13,4 @@ export const deleteTime = async (id_time) => {
 
 export const criaTime = async (time) => {
   const timec = await axios.post(`${baseUrl}/times`, time);
-  console.log("time", timec);
 };

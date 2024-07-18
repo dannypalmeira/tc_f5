@@ -12,3 +12,8 @@ export const buscaTimesRepository = async () => {
 
   return times;
 };
+
+export const cadastraTimeRepository = async (time, usuario) => {
+  const timesRef = await db.collection("times").add(time);
+  return timesRef;
+};

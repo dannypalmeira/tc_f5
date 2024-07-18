@@ -3,8 +3,10 @@ import {
   validarCamposObrigatoriosTime,
   validarCamposValidosTime,
 } from "../models/Times.js";
-import {buscaTimesService} from "../services/timeService.js";
-
+import {
+  buscaTimesService,
+  cadastraTimeService,
+} from "../services/timeService.js";
 class TimeController {
   // consultar times
   static async listaTime(req, res) {
@@ -18,29 +20,9 @@ class TimeController {
 
   // cadastra times e verifica campos
   static async cadastraTime(req, res) {
-    const camposFaltando = validarCamposObrigatoriosTime(req.body);
-    const camposInvalidos = validarCamposValidosTime(req.body);
-
-    if (camposFaltando.length > 0) {
-      return res
-        .status(400)
-        .json({error: `Campos faltando: ${camposFaltando.join(", ")}`});
-    }
-
-    if (camposInvalidos.length > 0) {
-      return res
-        .status(400)
-        .json({error: `Campos inválidos: ${camposInvalidos.join(", ")}`});
-    }
-
     try {
-      const {usuarios, nome_time} = req.body;
-
-      const time = {usuarios, nome_time};
-
-      const timesRef = await db.collection("times").add(time);
-
-      res.status(201).send(`Time criado com ID: ${timesRef.id}`);
+      const time = await cadastraTimeService(req.body);
+      res.status(201).send(`Time criado com ID: ${time.nome_time}`);
     } catch (error) {
       console.error("Erro ao criar time:", error);
       res.status(500).send("Erro ao criar time. Por favor, tente novamente.");

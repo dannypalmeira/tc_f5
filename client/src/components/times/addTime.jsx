@@ -6,12 +6,14 @@ import {useForm} from "react-hook-form";
 import Button from "../Buttons.jsx";
 import {Dialog} from "@headlessui/react";
 import {criaTime} from "../../services/timeService.js";
+import {useNavigate} from "react-router-dom";
 
 const AddTime = ({open, setOpen}) => {
   const {user} = useAuth();
   const [loading, setLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const nav = useNavigate();
   useEffect(() => {
     if (user) {
       setLoading(false);
@@ -35,8 +37,9 @@ const AddTime = ({open, setOpen}) => {
         usuarios: [user.id],
       };
       const timecriado = await criaTime(time);
-      console.log("time", timecriado);
+
       reset();
+      nav("/time");
       // Fechar o modal
       setOpen(false);
     } catch {
@@ -46,6 +49,7 @@ const AddTime = ({open, setOpen}) => {
       }, 2600);
     } finally {
       setIsSubmitting(false);
+      setOpen(false);
     }
   };
 
@@ -59,7 +63,7 @@ const AddTime = ({open, setOpen}) => {
             as='h2'
             className='text-base font-bold leading-6 text-gray-900 mb-4'
           >
-            ADICIONAR Time
+            ADICIONAR TIME
           </Dialog.Title>
           <div className='mt-2 flex flex-col gap-6'>
             <Textbox
@@ -77,7 +81,7 @@ const AddTime = ({open, setOpen}) => {
 
             <div className='bg-gray-50 py-6 sm:flex sm:flex-row-reverse gap-4'>
               <Button
-                label='Criar Tarefa'
+                label='Criar Tme'
                 type='submit'
                 className='bg-blue-600 px-8 text-sm font-semibold text-white hover:bg-blue-700 sm:w-auto'
                 disabled={isSubmitting}
