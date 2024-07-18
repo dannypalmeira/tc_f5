@@ -6,3 +6,7 @@ export const buscatimes = async () => {
 
   return times.data;
 };
+
+export const deleteTime = async (id_time) => {
+  const deletado = await axios.delete(`${baseUrl}/times/${id_time}`);
+};

@@ -1,27 +1,12 @@
 import React, {useEffect, useState} from "react";
-import {Dialog} from "@headlessui/react";
-import {useForm} from "react-hook-form";
 import ModalWrapper from "../ModalWrapper";
-import SelectList from "../SelectList";
+import {useAuth} from "../../contexts/authContext/index.jsx";
 import Textbox from "../TextBox.jsx";
 import Button from "../Buttons.jsx";
-import {cadastraTarefa} from "../../services/tarefaService.js";
-import {buscatimes} from "../../services/timeService.js";
-import {useAuth} from "../../contexts/authContext/index.jsx";
-import {mapFormDataToCollectionFields} from "../../funcoes/funcoes.jsx";
-const LISTA = ["PENDENTE", "EM ANDAMENTO", "FINALIZADA"];
-const PRIORIDADE = ["ALTA", "MEDIA", "BAIXA"];
 
-const AddTarefa = ({open, setOpen}) => {
+const addTime = async () => {
   const {user} = useAuth();
   const [loading, setLoading] = useState(true);
-  const [team, setTeam] = useState([]);
-  const [situacao, setStage] = useState(LISTA[0]);
-  const [prioridades, setPrioridades] = useState(PRIORIDADE[2]);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
-  const [selectedTeam, setSelectedTeam] = useState();
-  let nomeTimes = [];
 
   useEffect(() => {
     if (user) {
@@ -31,60 +16,8 @@ const AddTarefa = ({open, setOpen}) => {
     setSelectedTeam(team[0]?.id);
   }, [user]);
 
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: {errors},
-  } = useForm();
-
-  const buscatimesconst = async () => {
-    nomeTimes = [];
-    const times = await buscatimes();
-    setTeam(times);
-  };
-  const submitHandler = async (data) => {
-    setIsSubmitting(true);
-    selectedTeam;
-    const formData = {
-      id_usu: user.id,
-      nome_tarefa: data.nome_tarefa,
-      data_ini: data.data_ini,
-      descricao: data.descricao,
-      id_time: selectedTeam,
-      situacao,
-      prazo: prioridades,
-    };
-
-    const tarefaData = mapFormDataToCollectionFields(formData);
-    try {
-      await cadastraTarefa(tarefaData);
-      alert("Tarefa criada com sucesso!");
-      limpaForm();
-      setOpen(false);
-    } catch (error) {
-      setErrorMessage(error.message);
-      setTimeout(() => {
-        setErrorMessage("");
-      }, 2600);
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const limpaForm = () => {
-    reset({
-      nome_tarefa: "",
-      data_ini: "",
-      descricao: "",
-    });
-    setSelectedTeam("");
-    setStage(LISTA[0]);
-    setPrioridades(PRIORIDADE[2]);
-  };
-
   return loading ? (
-    <>Loading...</>
+    <>carregando</>
   ) : (
     <>
       <ModalWrapper open={open} setOpen={setOpen}>
@@ -192,5 +125,3 @@ const AddTarefa = ({open, setOpen}) => {
     </>
   );
 };
-
-export default AddTarefa;

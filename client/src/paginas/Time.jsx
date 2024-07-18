@@ -5,7 +5,9 @@ import clsx from "clsx";
 import ConfirmatioDialog, {UserAction} from "../components/Dialogs";
 import {readAllData, updateData, deleteData} from "../funcoes/funcoes";
 import {useAuth} from "../contexts/authContext";
-import {buscatimes} from "../services/timeService";
+import {deleteTime, buscatimes} from "../services/timeService";
+import Loading from "../components/Loader.jsx";
+import ConfirmatioDeletTime from "../components/times/Dialog.jsx";
 
 const TimeLista = () => {
   const [openDialog, setOpenDialog] = useState(false);
@@ -22,7 +24,6 @@ const TimeLista = () => {
     const fetchtimes = async () => {
       try {
         const times = await buscatimes();
-        console.log(times);
         setTimes(times);
       } catch (error) {
         console.error("Erro ao carregar usuários:", error);
@@ -46,10 +47,9 @@ const TimeLista = () => {
 
   const deleteHandler = async () => {
     try {
-      await deleteData("usuarios", selected);
-      console.log(`Usuário com ID ${selected} excluído com sucesso!`);
-      const updatedUsers = await readAllData("usuarios");
-      setUsers(updatedUsers);
+      console.log(`Time com ID ${selected} excluído com sucesso!`);
+      const deleted = await deleteTime(selected);
+      setOpenDialog(false);
     } catch (error) {
       console.error("Erro ao excluir usuário:", error);
     }
@@ -85,38 +85,43 @@ const TimeLista = () => {
           {time.nome_time}
         </div>
       </td>
+      {(user.tipo === "adm" || user.tipo === "admin") && (
+        <td className='p-2 flex gap-4 justify-end'>
+          <Button
+            className='text-blue-600 hover:text-blue-500 font-semibold sm:px-0'
+            label='Edit'
+            type='button'
+            onClick={() => editClick(time)}
+          />
 
-      <td className='p-2 flex gap-4 justify-end'>
-        <Button
-          className='text-blue-600 hover:text-blue-500 font-semibold sm:px-0'
-          label='Edit'
-          type='button'
-          onClick={() => editClick(time)}
-        />
-
-        <Button
-          className='text-red-700 hover:text-red-500 font-semibold sm:px-0'
-          label='Delete'
-          type='button'
-          onClick={() => deleteClick(time?.id)}
-        />
-      </td>
+          <Button
+            className='text-red-700 hover:text-red-500 font-semibold sm:px-0'
+            label='Delete'
+            type='button'
+            onClick={() => deleteClick(time?.id)}
+          />
+        </td>
+      )}
     </tr>
   );
 
-  return (
+  return loadng ? (
+    <Loading />
+  ) : (
     <>
       <div className='w-full md:px-1 px-0 mb-6'>
         <div className='flex items-center justify-between mb-8'>
           <h2 className={clsx("text-2xl font-semibold capitalize")}>
             Membros do Time
           </h2>
-          <Button
-            label='Add New User'
-            icon={<IoMdAdd className='text-lg' />}
-            className='flex flex-row-reverse gap-1 items-center bg-blue-600 text-white rounded-md 2xl:py-2.5'
-            onClick={() => setOpen(true)}
-          />
+          {(user.tipo === "adm" || user.tipo === "admin") && (
+            <Button
+              label=' Criar Time'
+              icon={<IoMdAdd className='text-lg' />}
+              className='flex flex-row-reverse gap-1 items-center bg-blue-600 text-white rounded-md 2xl:py-2.5'
+              onClick={() => setOpen(true)}
+            />
+          )}
         </div>
 
         <div className='bg-white px-2 md:px-4 py-4 shadow-md rounded'>
@@ -133,7 +138,7 @@ const TimeLista = () => {
         </div>
       </div>
 
-      <ConfirmatioDialog
+      <ConfirmatioDeletTime
         open={openDialog}
         setOpen={setOpenDialog}
         onClick={deleteHandler}
