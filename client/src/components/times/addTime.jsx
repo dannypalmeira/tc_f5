@@ -5,7 +5,8 @@ import Textbox from "../TextBox.jsx";
 import {useForm} from "react-hook-form";
 import Button from "../Buttons.jsx";
 import {Dialog} from "@headlessui/react";
-import {criaTime, usuarioPertenceATime} from "../../services/timeService.js";
+import {criaTime} from "../../services/timeService.js";
+import {usuarioPertenceATime} from "../../services/usuarioService.js";
 import {useNavigate} from "react-router-dom";
 
 const AddTime = ({open, setOpen}) => {
