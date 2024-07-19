@@ -109,7 +109,7 @@ export const mapFormDataToCollectionFields = (data) => {
   return {
     nome_tarefa: data.nome_tarefa,
     id_usu: data.id_usu, // Precisa ser atualizado com o ID do usuário correto
-    id_time: [data.id_time],
+    id_time: data.id_time,
     situacao: data.situacao,
     data_ini: data.data_ini,
     descricao: data.descricao,
