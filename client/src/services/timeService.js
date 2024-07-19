@@ -18,5 +18,4 @@ export const criaTime = async (time) => {
 export const usuarioPertenceATime = async (usuario) => {
   const response = await axios.get(`${baseUrl}/usuarios/${usuario}`);
   return response.data.time !== null && response.data.time !== undefined;
-  
 };

@@ -7,7 +7,6 @@ import {useAuth} from "../contexts/authContext";
 import {doSignOut} from "../funcoes/auth";
 
 const UserAvatar = () => {
-  const [open, setOpen] = useState(false);
   const [openPassword, setOpenPassword] = useState(false);
   const {user} = useAuth();
   const [loading, setLoading] = useState(true);
@@ -48,7 +47,7 @@ const UserAvatar = () => {
                 <div className='p-4'>
                   <Menu.Item>
                     <button
-                      onClick={() => setOpen(true)}
+                      onClick={() => navigate("/profile")}
                       className='text-gray-700 group flex w-full items-center rounded-md px-2 py-2 text-base'
                     >
                       <FaUser className='mr-2' aria-hidden='true' />

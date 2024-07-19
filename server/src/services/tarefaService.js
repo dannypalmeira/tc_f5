@@ -20,7 +20,6 @@ export const contaTarefaUserService = async (id_user) => {
     throw new Error("Informe o id do usuario");
   }
   const tarefas = await contaTarefaUserRepository(id_user);
-  console.log("tarefas", tarefas);
   return tarefas;
 };
 export const cadastraTarefaService = async (body) => {

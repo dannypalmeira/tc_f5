@@ -14,17 +14,18 @@ export const buscaTimesRepository = async () => {
   return times;
 };
 
-export const cadastraTimeRepository = async (time, usuario) => {
+export const cadastraTimeRepository = async (time) => {
   const id_user = time.usuarios[0];
   const timesRef = await db.collection("times").add(time);
   if (!timesRef?.id) {
     return timesRef;
   }
+  time.usuarios.forEach(async (user) => {
+    const userDocRef = db.collection("usuarios").doc(id_user);
 
-  const userDocRef = db.collection("usuarios").doc(id_user);
-
-  const user = await userDocRef.update({
-    time: admin.firestore.FieldValue.arrayUnion(timesRef.id),
+    await userDocRef.update({
+      time: admin.firestore.FieldValue.arrayUnion(timesRef.id),
+    });
   });
   return timesRef;
 };

@@ -46,6 +46,7 @@ const TimeLista = () => {
 
   const deleteClick = (userId) => {
     setSelected(userId);
+
     setOpenDialog(true);
   };
 

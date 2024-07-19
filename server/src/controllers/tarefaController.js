@@ -38,7 +38,6 @@ class TarefaController {
     const {id: id_user} = req.params;
     try {
       const tarefas = await contaTarefaUserService(id_user);
-      console.log("TAREFAS", tarefas);
       res.status(200).send(tarefas);
     } catch {
       res.status(500).send("Não foi possivel buscar tarefas.");
