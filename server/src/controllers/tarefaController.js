@@ -16,7 +16,7 @@ class TarefaController {
   static async listaTarefa(req, res) {
     try {
       const tarefas = await listaTarefaService();
-      res.status(200).send("Tarefa criada");
+      res.status(200).send(tarefas);
     } catch (error) {
       res.status(500).send("Erro ao buscar tarefas.");
     }

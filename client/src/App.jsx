@@ -1,6 +1,6 @@
 import {useAuth, AuthProvider} from "./contexts/authContext";
 import NonUserRoutes from "./routes/NonUserRoutes";
-import "./messaging_init_in_sw";
+import "./firebase/firebase.js";
 import UserRoutes from "./routes/UserRoutes";
 
 function App() {

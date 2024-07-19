@@ -13,7 +13,8 @@ export default function Profile() {
           <>
             <Popover.Button className='group inline-flex items-center outline-none'>
               <h1>
-                Nome : {user?.nome} {user?.sobrenome}{" "}
+                Nome : {user?.nome} {user?.sobrenome} <br />
+                Email : {user?.email}
               </h1>
             </Popover.Button>
 
