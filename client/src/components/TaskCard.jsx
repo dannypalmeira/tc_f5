@@ -1,13 +1,13 @@
 import clsx from "clsx";
-import React, {useState} from "react";
+import React, { useState } from "react";
 import {
   MdKeyboardArrowDown,
   MdKeyboardArrowUp,
   MdKeyboardDoubleArrowUp,
 } from "react-icons/md";
-import {BGS, PRIOTITYSTYELS, TASK_TYPE, formatDate} from "../utils";
+import { BGS, PRIOTITYSTYELS, TASK_TYPE, formatDate } from "../utils";
 import UserInfo from "./UserInfo";
-import TaskDialog from "./tarefas/TaskDialog"
+import EditTaskModal from "./tarefas/EditTaskModal"; // Ajuste o caminho conforme necessário
 
 const ICONS = {
   ALTA: <MdKeyboardDoubleArrowUp />,
@@ -15,8 +15,16 @@ const ICONS = {
   BAIXA: <MdKeyboardArrowDown />,
 };
 
-const TaskCard = ({tarefas}) => {
-  const [open, setOpen] = useState(false);
+const TaskCard = ({ tarefas }) => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const openEditModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const closeEditModal = () => {
+    setIsModalOpen(false);
+  };
 
   return (
     <>
@@ -31,20 +39,23 @@ const TaskCard = ({tarefas}) => {
             <span className='text-lg'>{ICONS[tarefas?.prazo]}</span>
             <span className='uppercase'>{tarefas?.prazo} Prioridade</span>
           </div>
-          <TaskDialog tarefas ={tarefas} />
+          <button
+            onClick={openEditModal}
+            className='text-blue-500 hover:underline'
+          >
+            Editar
+          </button>
         </div>
 
-        <>
-          <div className='flex items-center gap-2'>
-            <div
-              className={clsx(
-                "w-4 h-4 rounded-full",
-                TASK_TYPE[tarefas.situacao]
-              )}
-            />
-            <h4 className='line-clamp-1 text-black'>{tarefas?.nome_tarefa}</h4>
-          </div>
-        </>
+        <div className='flex items-center gap-2'>
+          <div
+            className={clsx(
+              "w-4 h-4 rounded-full",
+              TASK_TYPE[tarefas?.situacao]
+            )}
+          />
+          <h4 className='line-clamp-1 text-black'>{tarefas?.nome_tarefa}</h4>
+        </div>
 
         <div className='w-full border-t border-gray-200 my-2' />
         <div className='flex items-center justify-between mb-2'>
@@ -71,6 +82,15 @@ const TaskCard = ({tarefas}) => {
           </h5>
         </div>
       </div>
+
+      {/* Modal de Edição */}
+      {isModalOpen && (
+        <EditTaskModal
+          open={isModalOpen}
+          setOpen={setIsModalOpen}
+          tarefa={tarefas} // Passar a tarefa completa
+        />
+      )}
     </>
   );
 };
