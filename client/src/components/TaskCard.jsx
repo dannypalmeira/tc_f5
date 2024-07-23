@@ -7,6 +7,7 @@ import {
 } from "react-icons/md";
 import {BGS, PRIOTITYSTYELS, TASK_TYPE, formatDate} from "../utils";
 import UserInfo from "./UserInfo";
+import TaskDialog from "./tarefas/TaskDialog"
 
 const ICONS = {
   ALTA: <MdKeyboardDoubleArrowUp />,
@@ -30,6 +31,7 @@ const TaskCard = ({tarefas}) => {
             <span className='text-lg'>{ICONS[tarefas?.prazo]}</span>
             <span className='uppercase'>{tarefas?.prazo} Prioridade</span>
           </div>
+          <TaskDialog tarefas ={tarefas} />
         </div>
 
         <>
